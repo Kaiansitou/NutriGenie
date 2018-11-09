@@ -65,16 +65,8 @@ public class MainActivity extends AppCompatActivity {
                             case R.id.navigation_scan:
                                 break;
                             case R.id.navigation_account:
-
-                                Button accountButton = navigation.findViewById(R.id.navigation_account);
-                                accountButton.setOnClickListener(new View.OnClickListener() {
-
-                                    public void onClick(View v) {
-                                        Intent intent = new Intent(MainActivity.this, AccountActivity.class);
-                                        startActivity(intent);
-                                    }
-                                });
-
+                                Intent intent = new Intent(MainActivity.this, AccountActivity.class);
+                                startActivity(intent);
                         }
                         return false;
                     }
