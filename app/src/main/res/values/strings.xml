@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">NutriGenie</string>
+    <string name="app_name">Nutri Genie</string>
     <string name="title_home">Home</string>
     <string name="title_scan">Scan</string>
     <string name="title_account">Account</string>
+    <string name="title_settings">Settings</string>
 </resources>
