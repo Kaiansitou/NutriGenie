@@ -8,12 +8,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:529286331304:android:09ffaba831ed50ae",
+        "mobilesdk_app_id": "1:529286331304:android:f38166cdf7ae1ad1",
         "android_client_info": {
-          "package_name": "com.example.nutrigenie"
+          "package_name": "com.fruithat.nutrigenie"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "529286331304-r1mtjfmdjdrudmgl1gq7j7scgsicjvtf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fruithat.nutrigenie",
+            "certificate_hash": "ee348f2f538f40bea42f03f568dfdd34ee89010c"
+          }
+        },
         {
           "client_id": "529286331304-jf0qoepm6oudfv5pr7fbf0ln91fg1hit.apps.googleusercontent.com",
           "client_type": 3
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "529286331304-jf0qoepm6oudfv5pr7fbf0ln91fg1hit.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
