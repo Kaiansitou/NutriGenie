@@ -38,7 +38,7 @@
                 android:id="@+id/textView"
                 android:layout_width="267dp"
                 android:layout_height="100dp"
-                android:text="Statistics Graph"
+                android:text="@string/home_title_text"
                 android:textColor="#25383C"
                 android:textSize="32sp"
                 android:textStyle="bold"
