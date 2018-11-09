@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "529286331304",
+    "firebase_url": "https://nutri-genie-232cc.firebaseio.com",
+    "project_id": "nutri-genie-232cc",
+    "storage_bucket": "nutri-genie-232cc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:529286331304:android:09ffaba831ed50ae",
+        "android_client_info": {
+          "package_name": "com.example.nutrigenie"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "529286331304-jf0qoepm6oudfv5pr7fbf0ln91fg1hit.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5ZoVS1mbCm-QMHOTLDCkxJhzhiiyKVGM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
