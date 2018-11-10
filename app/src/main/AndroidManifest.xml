@@ -18,10 +18,5 @@
                 android:name="com.google.firebase.ml.vision.DEPENDENCIES"
                 android:value="ocr" />
 
-        <activity
-                android:name=".AccountActivity"
-                android:label="NutriGenie">
-        </activity>
-
     </application>
 </manifest>

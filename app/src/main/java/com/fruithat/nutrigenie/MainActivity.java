@@ -4,24 +4,27 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.widget.FrameLayout;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.*;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-
-    private TextView mTextMessage;
 
     /*
      * Navigation Drawer
@@ -29,34 +32,30 @@ public class MainActivity extends AppCompatActivity {
     private static DrawerLayout mDrawerLayout;
 
     /*
-     * Firebase Authentication Variables
+     * Firebase Authentication
      */
     private static final int RC_SIGN_IN = 123;
 
-    private final BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+    /*
+     * Firebase Database
+     */
+    private DatabaseReference mDatabase;
 
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_home);
-                    return true;
-                case R.id.navigation_scan:
-                    mTextMessage.setText(R.string.title_scan);
-                    return true;
-                case R.id.navigation_account:
-                    mTextMessage.setText(R.string.title_account);
-                    return true;
-            }
-            return false;
-        }
-    };
+    /*
+     * Fragments
+     */
+    private FragmentManager mFragmentManager;
+    private FrameLayout mFrameLayout;
+    private HomeFragment mHomeFragment;
+    private PreferencesFragment mPreferencesFragment;
+    private AccountFragment mAccountFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -66,23 +65,58 @@ public class MainActivity extends AppCompatActivity {
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
-        mTextMessage = findViewById(R.id.message);
-        final BottomNavigationView navigation = findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        // set item as selected to persist highlight
+                        menuItem.setChecked(true);
+                        // close drawer when item is tapped
+                        mDrawerLayout.closeDrawers();
 
+                        // Add code here to update the UI based on the item selected
+                        // For example, swap UI fragments here
+                        FragmentTransaction mFragmentTransaction = mFragmentManager.beginTransaction();
+                        mFragmentTransaction.replace(R.id.fragment_container, mPreferencesFragment);
+                        mFragmentTransaction.commit();
+                        mFragmentManager.executePendingTransactions();
+
+                        return true;
+                    }
+                });
+
+        mFrameLayout = findViewById(R.id.fragment_container);
+        mFragmentManager = getSupportFragmentManager();
+
+        FragmentTransaction mFragmentTransaction = mFragmentManager.beginTransaction();
+        mHomeFragment = new HomeFragment();
+        mAccountFragment = new AccountFragment();
+        mPreferencesFragment = new PreferencesFragment();
+        mFragmentTransaction.add(R.id.fragment_container, mHomeFragment);
+        mFragmentTransaction.commit();
+        mFragmentManager.executePendingTransactions();
+
+        final BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem item) {
+                        FragmentTransaction mFragmentTransaction = mFragmentManager.beginTransaction();
+
                         switch (item.getItemId()) {
                             case R.id.navigation_home:
+                                mFragmentTransaction.replace(R.id.fragment_container, mHomeFragment);
                                 break;
                             case R.id.navigation_scan:
                                 break;
                             case R.id.navigation_account:
-                                Intent intent = new Intent(MainActivity.this, AccountActivity.class);
-                                startActivity(intent);
+                                mFragmentTransaction.replace(R.id.fragment_container, mAccountFragment);
                         }
+
+                        mFragmentTransaction.commit();
+                        mFragmentManager.executePendingTransactions();
+
                         return false;
                     }
                 });
@@ -93,12 +127,27 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
         // Get the current firebase user
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         // If the current user is null, then prompt the user to sign in
         if (currentUser == null) {
             signIn();
         }
+
+        DatabaseReference user_preferences = mDatabase.child("preferences").child(currentUser.getUid());
+        user_preferences.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.hasChild("calories")) {
+                    setUpNewUser(currentUser);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
     }
 
     @Override
@@ -124,6 +173,12 @@ public class MainActivity extends AppCompatActivity {
                         .setAvailableProviders(providers)
                         .build(),
                 RC_SIGN_IN);
+    }
+
+    private void setUpNewUser(FirebaseUser currentUser) {
+        Preferences preferences = new Preferences(2000);
+
+        mDatabase.child("preferences").child(currentUser.getUid()).setValue(preferences);
     }
 
     @Override
