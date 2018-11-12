@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
-                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
                 // Create the user's preferences if they do not already exist
                 DatabaseReference user_preferences = mDatabase.child("preferences").child(currentUser.getUid());
