@@ -16,8 +16,11 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.*;
+import com.fruithat.nutrigenie.NutritionInformation.NutritionInformationBuilder;
 
 import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -92,29 +95,28 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        // Get the current firebase user
-        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        signIn();
 
-        // If the current user is null, then prompt the user to sign in
-        if (currentUser == null) {
-            signIn();
-
-            // Create the user's preferences if they do not already exist
-            DatabaseReference user_preferences = mDatabase.child("preferences").child(currentUser.getUid());
-            user_preferences.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (!dataSnapshot.hasChild("calories")) {
-                        setUpNewUser(currentUser);
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    System.out.println("The read failed: " + databaseError.getCode());
-                }
-            });
-        }
+        NutritionHistory history = NutritionHistory.getInstance();
+//        history.addNutritionInformation("test", new NutritionInformationBuilder("cup", 1.5)
+//                .calcium(15)
+//                .calories(260)
+//                .caloriesFromFat(120)
+//                .carbohydrates(31)
+//                .cholesterol(30)
+//                .iron(4)
+//                .protein(5)
+//                .saturatedFat(5)
+//                .servingsPerContainer(2)
+//                .sodium(660)
+//                .sugar(5)
+//                .totalFat(13)
+//                .transFat(2)
+//                .vitaminA(4)
+//                .vitaminC(2)
+//                .build());
+//
+//        history.getNutritionInformation(new Date(0), new Date(), null);
     }
 
     private void setUpToolbar() {
@@ -159,18 +161,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void signIn() {
-        // Choose authentication providers
-        List<AuthUI.IdpConfig> providers = Arrays.asList(
-                new AuthUI.IdpConfig.EmailBuilder().build(),
-                new AuthUI.IdpConfig.GoogleBuilder().build());
+        // Get the current firebase user
+        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        // Create and launch sign-in intent
-        startActivityForResult(
-                AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setAvailableProviders(providers)
-                        .build(),
-                RC_SIGN_IN);
+        // If the current user is null, then prompt the user to sign in
+        if (currentUser == null) {
+            // Choose authentication providers
+            List<AuthUI.IdpConfig> providers = Arrays.asList(
+                    new AuthUI.IdpConfig.EmailBuilder().build(),
+                    new AuthUI.IdpConfig.GoogleBuilder().build());
+
+            // Create and launch sign-in intent
+            startActivityForResult(
+                    AuthUI.getInstance()
+                            .createSignInIntentBuilder()
+                            .setAvailableProviders(providers)
+                            .build(),
+                    RC_SIGN_IN);
+
+            // Create the user's preferences if they do not already exist
+            DatabaseReference user_preferences = mDatabase.child("preferences").child(currentUser.getUid());
+            user_preferences.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (!dataSnapshot.hasChild("calories")) {
+                        setUpNewUser(currentUser);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    System.out.println("The read failed: " + databaseError.getCode());
+                }
+            });
+        }
     }
 
     private void setUpNewUser(FirebaseUser currentUser) {
