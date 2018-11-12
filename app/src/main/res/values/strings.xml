@@ -8,4 +8,5 @@
     <string name="preferences_title">Preferences</string>
     <string name="account_title_text">Account</string>
     <string name="scan_title_text">Scan</string>
+    <string name="scan_button_text">Test Scan</string>
 </resources>
