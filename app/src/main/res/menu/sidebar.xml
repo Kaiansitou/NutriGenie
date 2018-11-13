@@ -7,7 +7,16 @@
                 android:title="@string/title_settings"/>
         <item
                 android:id="@+id/sidebar_history"
-                android:icon="@drawable/ic_settings"
+                android:icon="@drawable/ic_assignment"
                 android:title="History"/>
+        <item
+                android:id="@+id/sidebar_about"
+                android:icon="@drawable/ic_about2"
+                android:title="About"/>
+
+        <item
+                android:id="@+id/sidebar_contact"
+                android:icon="@drawable/ic_contact"
+                android:title="Contact us"/>
     </group>
 </menu>

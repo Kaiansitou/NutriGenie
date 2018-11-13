@@ -19,6 +19,7 @@ import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.*;
+import android.content.Intent;
 import com.fruithat.nutrigenie.NutritionInformation.NutritionInformationBuilder;
 
 import java.util.Arrays;
@@ -52,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
     private AccountFragment mAccountFragment = new AccountFragment();
     private ScanFragment mScanFragment = new ScanFragment();
     private HistoryFragment mHistoryFragment = new HistoryFragment();
+    private AboutFragment mAboutFragment = new AboutFragment();
+    private ContactUsFragment mContactFragment = new ContactUsFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,6 +154,12 @@ public class MainActivity extends AppCompatActivity {
                                 break;
                             case R.id.sidebar_history:
                                 mFragmentTransaction.replace(R.id.fragment_container, mHistoryFragment);
+                                break;
+                            case R.id.sidebar_about:
+                                mFragmentTransaction.replace(R.id.fragment_container, mAboutFragment);
+                                break;
+                            case R.id.sidebar_contact:
+                                mFragmentTransaction.replace(R.id.fragment_container, mContactFragment);
                                 break;
                         }
                         mFragmentTransaction.commit();
