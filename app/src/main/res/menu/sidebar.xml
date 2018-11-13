@@ -5,5 +5,9 @@
                 android:id="@+id/sidebar_settings"
                 android:icon="@drawable/ic_settings"
                 android:title="@string/title_settings"/>
+        <item
+                android:id="@+id/sidebar_history"
+                android:icon="@drawable/ic_settings"
+                android:title="History"/>
     </group>
 </menu>

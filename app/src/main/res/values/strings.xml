@@ -9,4 +9,7 @@
     <string name="account_title_text">Account</string>
     <string name="scan_title_text">Scan</string>
     <string name="scan_button_text">Test Scan</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

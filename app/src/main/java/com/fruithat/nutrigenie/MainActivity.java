@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private PreferencesFragment mPreferencesFragment = new PreferencesFragment();
     private AccountFragment mAccountFragment = new AccountFragment();
     private ScanFragment mScanFragment = new ScanFragment();
+    private HistoryFragment mHistoryFragment = new HistoryFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,7 +145,14 @@ public class MainActivity extends AppCompatActivity {
                         // Add code here to update the UI based on the item selected
                         // For example, swap UI fragments here
                         FragmentTransaction mFragmentTransaction = mFragmentManager.beginTransaction();
-                        mFragmentTransaction.replace(R.id.fragment_container, mPreferencesFragment);
+                        switch (menuItem.getItemId()) {
+                            case R.id.sidebar_settings:
+                                mFragmentTransaction.replace(R.id.fragment_container, mPreferencesFragment);
+                                break;
+                            case R.id.sidebar_history:
+                                mFragmentTransaction.replace(R.id.fragment_container, mHistoryFragment);
+                                break;
+                        }
                         mFragmentTransaction.commit();
                         mFragmentManager.executePendingTransactions();
 
