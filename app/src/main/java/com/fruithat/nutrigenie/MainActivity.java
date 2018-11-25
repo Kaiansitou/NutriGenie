@@ -27,6 +27,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import com.github.mikephil.charting.*;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+
 public class MainActivity extends AppCompatActivity {
 
     /*
@@ -55,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     private HistoryFragment mHistoryFragment = new HistoryFragment();
     private AboutFragment mAboutFragment = new AboutFragment();
     private ContactUsFragment mContactFragment = new ContactUsFragment();
+    private CircleGraphFragment mCircleGraphFragment = new CircleGraphFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

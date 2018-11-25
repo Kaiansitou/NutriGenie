@@ -1,32 +1,32 @@
 package com.fruithat.nutrigenie;
-import android.graphics.Color;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Bundle;
-import android.support.v4.app.*;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import com.github.mikephil.charting.*;
-import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
-import java.util.ArrayList;
-import java.util.List;
 
+public class CircleGraphFragment extends Fragment {
 
-public class CircleGraphFragment {
-    @Override
     public CircleGraphFragment() {
-        // Required empty public constructor
+
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_about, container, false);
 
+        // Inflate the layout defined in quote_fragment.xml
+        // The last parameter is false because the returned view does not need to be attached to the container ViewGroup
+        return inflater.inflate(R.layout.fragment_circlegraph, container, false);
     }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Don't destroy Fragment on reconfiguration
+        setRetainInstance(true);
+    }
+
 }
