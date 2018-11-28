@@ -1,5 +1,6 @@
 package com.fruithat.nutrigenie;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
@@ -70,40 +71,25 @@ public class ScanFragment extends Fragment {
         });
     }
 
+    private void startStatisticsActivity() {
+        // Yan-Jen: change MainActivity to wherever you need the scanned data
+        // maybe a new Statistics Activity or fragment?
+        Intent intent = new Intent(getActivity(), MainActivity.class);
+        for (String key : nutritionItems.keySet()) {
+            Log.i(TAG, key + " => " + nutritionItems.get(key));
+            intent.putExtra(key, nutritionItems.get(key));
+        }
+        startActivity(intent);
+    }
+
     private void processLabel() {
         textRecognizer.processImage(image)
                 .addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
                     @Override
                     public void onSuccess(FirebaseVisionText result) {
-                        Log.i(TAG, "SUCCESS!");
-                        String resultText = result.getText();
-                        //Log.i(TAG, "Result text: " + resultText);
-                        int blockNum = 0;
                         for (FirebaseVisionText.TextBlock block: result.getTextBlocks()) {
-                            int lineNum = 0;
-                            String blockText = block.getText();
-                            Float blockConfidence = block.getConfidence();
-                            List<RecognizedLanguage> blockLanguages = block.getRecognizedLanguages();
-                            Point[] blockCornerPoints = block.getCornerPoints();
-                            Rect blockFrame = block.getBoundingBox();
                             for (FirebaseVisionText.Line line: block.getLines()) {
-                                int elementNum = 0;
                                 String lineText = line.getText();
-                                Float lineConfidence = line.getConfidence();
-                                List<RecognizedLanguage> lineLanguages = line.getRecognizedLanguages();
-                                Point[] lineCornerPoints = line.getCornerPoints();
-                                Rect lineFrame = line.getBoundingBox();
-                                for (FirebaseVisionText.Element element: line.getElements()) {
-                                    String elementText = element.getText();
-                                    Float elementConfidence = element.getConfidence();
-                                    List<RecognizedLanguage> elementLanguages = element.getRecognizedLanguages();
-                                    Point[] elementCornerPoints = element.getCornerPoints();
-                                    Rect elementFrame = element.getBoundingBox();
-                                    String num = blockText + " " + lineText + " " + elementText;
-//                                    Log.i(TAG, num + " " + elementText);
-                                    elementNum++;
-                                }
-//                                Log.i(TAG, lineNum + " " + lineText);
                                 if (lineText.contains("Protein")) {
                                     String[] parsedNutritionItem = lineText.split(" ");
                                     Integer grams = parseGrams(parsedNutritionItem[1]);
@@ -150,15 +136,10 @@ public class ScanFragment extends Fragment {
                                     nutritionItems.put(key, grams);
                                     parseGrams(parsedNutritionItem[2]);
                                 }
-                                lineNum++;
                             }
-                            // Log.i(TAG, blockText);
-                            blockNum++;
                         }
 
-                        for (String key : nutritionItems.keySet()) {
-                            Log.i(TAG, key + " => " + nutritionItems.get(key));
-                        }
+                        startStatisticsActivity();
                     }
                 })
                 .addOnFailureListener(
