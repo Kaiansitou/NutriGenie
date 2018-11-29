@@ -11,7 +11,8 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 import android.widget.RadioGroup;
-
+import android.widget.TextView;
+import org.w3c.dom.Text;
 
 public class AccountFragment extends Fragment {
 
@@ -39,7 +40,7 @@ public class AccountFragment extends Fragment {
                 EditText a = view.findViewById(R.id.editText1);
                 EditText b = view.findViewById(R.id.editText2);
                 EditText c = view.findViewById(R.id.editText3);
-                EditText d = view.findViewById(R.id.editText4);
+                TextView d = view.findViewById(R.id.textView12);
                 RadioGroup radioGroup;
                 radioGroup = (RadioGroup) view.findViewById(R.id.RGroup);
                 radioGroup.clearCheck();
@@ -53,17 +54,52 @@ public class AccountFragment extends Fragment {
             }
         });
 
-//        Button calculate = (Button) view.findViewById(R.id.calculate);
-//
-//        calculate.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Integer weight = view.findViewById(R.id.weight);
-//                Integer women_BMR = 655+(4.3 * weight) + (12.7 * (cm * 0.393700787)) - (4.7 * year);
-//                Integer men_BMR;
-//
-//            }
-//        });
+        Button calculate = (Button) view.findViewById(R.id.calculate);
+
+        calculate.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                RadioButton female = view.findViewById(R.id.Female);
+                RadioButton male = view.findViewById(R.id.Male);
+
+                if (female.isChecked()) {
+
+                    EditText weightNum = view.findViewById(R.id.editText3);
+                    int weight = Integer.parseInt(weightNum.getText().toString());
+                    EditText cmNum = view.findViewById(R.id.editText1);
+                    double height = Double.parseDouble(cmNum.getText().toString());
+                    EditText yearNum = view.findViewById(R.id.editText2);
+                    int year = Integer.parseInt(yearNum.getText().toString());
+
+                    double women_BMR = 10 * (weight * 0.45359237) + 6.25 * height - 5 * year - 161;
+                    int women = (int) women_BMR;
+
+                    TextView display = (TextView) view.findViewById(R.id.textView12);
+                    String value = String.valueOf(women);
+                    display.setText(value);
+
+                } else if (male.isChecked()){
+
+                    EditText weightNum = view.findViewById(R.id.editText3);
+                    int weight = Integer.parseInt(weightNum.getText().toString());
+                    EditText cmNum = view.findViewById(R.id.editText1);
+                    double height = Double.parseDouble(cmNum.getText().toString());
+                    EditText yearNum = view.findViewById(R.id.editText2);
+                    int year = Integer.parseInt(yearNum.getText().toString());
+
+                    double men_BMR = 10 * (weight * 0.45359237) + 6.25 * height - 5 * year + 5;
+                    int men = (int) men_BMR;
+
+                    TextView display = (TextView) view.findViewById(R.id.textView12);
+                    String value = String.valueOf(men);
+                    display.setText(value);
+                } else {
+                    Toast.makeText(getContext(),"Please Select Gender", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
 
         return view;
 
