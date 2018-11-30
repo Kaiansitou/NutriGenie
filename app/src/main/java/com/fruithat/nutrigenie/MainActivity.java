@@ -105,7 +105,9 @@ public class MainActivity extends AppCompatActivity {
         signIn();
 
         NutritionHistory history = NutritionHistory.getInstance();
-        history.addNutritionInformation("test", new NutritionInformationBuilder("cup", 1.5)
+        history.addNutritionInformation("test", new NutritionInformationBuilder()
+               .servingType("cup")
+               .servingSize(1.5)
                .calcium(15)
                .calories(260)
                .caloriesFromFat(120)
