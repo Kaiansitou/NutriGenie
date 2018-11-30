@@ -2,6 +2,7 @@ package com.fruithat.nutrigenie;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +29,8 @@ public class AccountFragment extends Fragment {
 
     private DatabaseReference mDatabase;
     private FirebaseUser mCurrentUser;
+
+    private MainActivity mActivity;
 
     public AccountFragment() {
         super();
@@ -141,6 +144,9 @@ public class AccountFragment extends Fragment {
             data.put("calories", Integer.parseInt(result.getText().toString()));
 
             mDatabase.child("account").child(mCurrentUser.getUid()).updateChildren(data);
+
+            BottomNavigationView nav = getActivity().findViewById(R.id.navigation);
+            nav.setSelectedItemId(R.id.navigation_home);
         }
     }
 
