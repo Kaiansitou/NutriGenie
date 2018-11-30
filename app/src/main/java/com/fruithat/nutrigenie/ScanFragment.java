@@ -209,22 +209,14 @@ public class ScanFragment extends Fragment {
         int idxM = gramsString.indexOf("m");
         int idxG = gramsString.indexOf("g");
         float result = -1;
+        gramsString = gramsString.replaceAll("(o|O)+", "0");
         if (idxM >= 0) {
             String num = gramsString.substring(0, idxM);
-            // Sometimes Firebase interprests zeroes as O's so we have to check for this
-            // still need to check for cases where there could be more than one misinterpreted zero
-            if (num.equals("O")) {
-                num = "0";
-            }
             result = Float.parseFloat(num);
         } else if (idxG >= 0) {
             String num = gramsString.substring(0, idxG);
-            if (num.equals("O")) {
-                num = "0";
-            }
             result = Float.parseFloat(num);
         }
-
         return result;
     }
 }

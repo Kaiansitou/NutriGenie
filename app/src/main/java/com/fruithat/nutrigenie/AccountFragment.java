@@ -17,8 +17,6 @@ import android.preference.PreferenceManager;
 import android.content.Context;
 import static android.content.Context.MODE_PRIVATE;
 
-
-
 public class AccountFragment extends Fragment {
 
     @Override
@@ -44,8 +42,8 @@ public class AccountFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 EditText a = view.findViewById(R.id.editText1);
-                EditText b = view.findViewById(R.id.editText2);
-                EditText c = view.findViewById(R.id.editText3);
+                EditText b = view.findViewById(R.id.editText3);
+                EditText c = view.findViewById(R.id.editText2);
                 TextView d = view.findViewById(R.id.textView12);
                 RadioGroup radioGroup;
                 radioGroup = (RadioGroup) view.findViewById(R.id.RGroup);
@@ -76,10 +74,6 @@ public class AccountFragment extends Fragment {
                 double height = Double.parseDouble(cmNum.getText().toString());
                 EditText yearNum = view.findViewById(R.id.editText2);
                 int year = Integer.parseInt(yearNum.getText().toString());
-
-                if(weightNum == null || cmNum == null || yearNum == null){
-                    Toast.makeText(getContext(),"Please enter your information", Toast.LENGTH_LONG).show();
-                }
 
                 if (female.isChecked()) {
 

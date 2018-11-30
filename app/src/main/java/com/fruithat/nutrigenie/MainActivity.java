@@ -1,5 +1,6 @@
 package com.fruithat.nutrigenie;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,34 +16,34 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.*;
-import android.content.Intent;
-import com.fruithat.nutrigenie.NutritionInformation.NutritionInformationBuilder;
+import sharefirebasepreferences.crysxd.de.lib.SharedFirebasePreferences;
+import sharefirebasepreferences.crysxd.de.lib.SharedFirebasePreferencesContextWrapper;
 
 import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
-
-    /*
-     * Navigation Drawer
-     */
-    private DrawerLayout mDrawerLayout;
+public class MainActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener {
 
     /*
      * Firebase Authentication
      */
     private static final int RC_SIGN_IN = 123;
-
+    /*
+     * Navigation Drawer
+     */
+    private DrawerLayout mDrawerLayout;
     /*
      * Firebase Database
      */
     private DatabaseReference mDatabase;
+
+    /*
+     * Shared Preferences
+     */
+    private SharedFirebasePreferences mPreferences;
 
     /*
      * Fragments
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private ScanFragment mScanFragment = new ScanFragment();
     private HistoryFragment mHistoryFragment = new HistoryFragment();
     private AboutFragment mAboutFragment = new AboutFragment();
-    private ContactUsFragment mContactFragment = new ContactUsFragment();
+    private LoadingFragment mLoadingFragment = new LoadingFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,64 +69,39 @@ public class MainActivity extends AppCompatActivity {
         mFragmentManager = getSupportFragmentManager();
 
         FragmentTransaction mFragmentTransaction = mFragmentManager.beginTransaction();
-        mFragmentTransaction.add(R.id.fragment_container, mHomeFragment);
+        mFragmentTransaction.add(R.id.fragment_container, mLoadingFragment);
         mFragmentTransaction.commit();
         mFragmentManager.executePendingTransactions();
-
-        final BottomNavigationView navigation = findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(
-                new BottomNavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem item) {
-                        FragmentTransaction mFragmentTransaction = mFragmentManager.beginTransaction();
-
-                        switch (item.getItemId()) {
-                            case R.id.navigation_home:
-                                mFragmentTransaction.replace(R.id.fragment_container, mHomeFragment);
-                                break;
-                            case R.id.navigation_scan:
-                                mFragmentTransaction.replace(R.id.fragment_container, mScanFragment);
-                                break;
-                            case R.id.navigation_account:
-                                mFragmentTransaction.replace(R.id.fragment_container, mAccountFragment);
-                        }
-
-                        mFragmentTransaction.commit();
-                        mFragmentManager.executePendingTransactions();
-
-                        return true;
-                    }
-                });
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        signIn();
+        FirebaseAuth.getInstance().addAuthStateListener(this);
+    }
 
-        NutritionHistory history = NutritionHistory.getInstance();
-        history.addNutritionInformation("test", new NutritionInformationBuilder()
-               .servingType("cup")
-               .servingSize(1.5)
-               .calcium(15)
-               .calories(260)
-               .caloriesFromFat(120)
-                .carbohydrates(31)
-                .cholesterol(30)
-                .iron(4)
-                .protein(5)
-                .saturatedFat(5)
-                .servingsPerContainer(2)
-                .sodium(660)
-                .sugar(5)
-                .totalFat(13)
-                .transFat(2)
-                .vitaminA(4)
-                .vitaminC(2)
-                .build());
+    @Override
+    protected void onResume() {
+        super.onResume();
 
-//        history.getNutritionInformation(new Date(0), new Date(), null);
+        if (mPreferences != null) {
+            mPreferences.keepSynced(true);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (mPreferences != null) {
+            mPreferences.keepSynced(false);
+        }
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(new SharedFirebasePreferencesContextWrapper(newBase));
     }
 
     private void setUpToolbar() {
@@ -139,37 +115,59 @@ public class MainActivity extends AppCompatActivity {
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        // set item as selected to persist highlight
-                        menuItem.setChecked(true);
-                        // close drawer when item is tapped
-                        mDrawerLayout.closeDrawers();
+                menuItem -> {
+                    // set item as selected to persist highlight
+                    menuItem.setChecked(true);
+                    // close drawer when item is tapped
+                    mDrawerLayout.closeDrawers();
 
-                        // Add code here to update the UI based on the item selected
-                        // For example, swap UI fragments here
-                        FragmentTransaction mFragmentTransaction = mFragmentManager.beginTransaction();
-                        switch (menuItem.getItemId()) {
-                            case R.id.sidebar_settings:
-                                mFragmentTransaction.replace(R.id.fragment_container, mPreferencesFragment);
-                                break;
-                            case R.id.sidebar_history:
-                                mFragmentTransaction.replace(R.id.fragment_container, mHistoryFragment);
+                    // Add code here to update the UI based on the item selected
+                    // For example, swap UI fragments here
+                    FragmentTransaction mFragmentTransaction = mFragmentManager.beginTransaction();
+                    switch (menuItem.getItemId()) {
+                        case R.id.sidebar_settings:
+                            actionbar.setTitle("Preferences");
+                            mFragmentTransaction.replace(R.id.fragment_container, mPreferencesFragment);
+                            break;
+                        case R.id.sidebar_history:
+                            actionbar.setTitle("History");
+                            mFragmentTransaction.replace(R.id.fragment_container, mHistoryFragment);
 
-                               break;
-                            case R.id.sidebar_about:
-                                mFragmentTransaction.replace(R.id.fragment_container, mAboutFragment);
-                                break;
-                            case R.id.sidebar_contact:
-                                mFragmentTransaction.replace(R.id.fragment_container, mContactFragment);
-                                break;
-                        }
-                        mFragmentTransaction.commit();
-                        mFragmentManager.executePendingTransactions();
-
-                        return true;
+                            break;
+                        case R.id.sidebar_about:
+                            actionbar.setTitle("About");
+                            mFragmentTransaction.replace(R.id.fragment_container, mAboutFragment);
+                            break;
                     }
+                    mFragmentTransaction.commit();
+                    mFragmentManager.executePendingTransactions();
+
+                    return true;
+                });
+
+        final BottomNavigationView navigation = findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(
+                item -> {
+                    FragmentTransaction mFragmentTransaction1 = mFragmentManager.beginTransaction();
+
+                    switch (item.getItemId()) {
+                        case R.id.navigation_home:
+                            actionbar.setTitle("Nutri Genie");
+                            mFragmentTransaction1.replace(R.id.fragment_container, mHomeFragment);
+                            break;
+                        case R.id.navigation_scan:
+                            actionbar.setTitle("Scan");
+                            mFragmentTransaction1.replace(R.id.fragment_container, mScanFragment);
+                            break;
+                        case R.id.navigation_account:
+                            actionbar.setTitle("Profile");
+                            mFragmentTransaction1.replace(R.id.fragment_container, mAccountFragment);
+                    }
+
+                    mFragmentTransaction1.commit();
+                    mFragmentManager.executePendingTransactions();
+
+                    return true;
                 });
     }
 
@@ -183,9 +181,41 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void signIn() {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SIGN_IN) {
+            if (resultCode == RESULT_OK) {
+                // Successfully signed in
+                final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+                // Create the user's preferences if they do not already exist
+                DatabaseReference user_preferences = mDatabase.child("preferences").child(currentUser.getUid());
+                user_preferences.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (!dataSnapshot.hasChild("calories")) {
+                            Preferences pref = new Preferences(2000);
+                            user_preferences.setValue(pref);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        System.out.println("The read failed: " + databaseError.getCode());
+                    }
+                });
+            } else {
+                finish();
+            }
+        }
+    }
+
+    @Override
+    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
         // Get the current firebase user
-        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        final FirebaseUser currentUser = firebaseAuth.getCurrentUser();
 
         // If the current user is null, then prompt the user to sign in
         if (currentUser == null) {
@@ -201,44 +231,27 @@ public class MainActivity extends AppCompatActivity {
                             .setAvailableProviders(providers)
                             .build(),
                     RC_SIGN_IN);
-        }
-    }
+        } else {
+            mPreferences = SharedFirebasePreferences.getDefaultInstance(this);
+            mPreferences.keepSynced(true);
+            mPreferences.pull().addOnPullCompleteListener(new SharedFirebasePreferences.OnPullCompleteListener() {
+                @Override
+                public void onPullSucceeded(SharedFirebasePreferences preferences) {
+                    FragmentTransaction mFragmentTransaction = mFragmentManager.beginTransaction();
+                    mFragmentTransaction.replace(R.id.fragment_container, mHomeFragment);
+                    mFragmentTransaction.commit();
+                    mFragmentManager.executePendingTransactions();
+                }
 
-    private void setUpNewUser(FirebaseUser currentUser) {
-        Preferences preferences = new Preferences(2000);
-
-        mDatabase.child("preferences").child(currentUser.getUid()).setValue(preferences);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == RC_SIGN_IN) {
-            IdpResponse response = IdpResponse.fromResultIntent(data);
-
-            if (resultCode == RESULT_OK) {
-                // Successfully signed in
-                final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-
-                // Create the user's preferences if they do not already exist
-                DatabaseReference user_preferences = mDatabase.child("preferences").child(currentUser.getUid());
-                user_preferences.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (!dataSnapshot.hasChild("calories")) {
-                            setUpNewUser(currentUser);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        System.out.println("The read failed: " + databaseError.getCode());
-                    }
-                });
-            } else {
-                Toast.makeText(getApplicationContext(), "Failed to sign in", Toast.LENGTH_SHORT).show();
-            }
+                @Override
+                public void onPullFailed(Exception e) {
+                    FragmentTransaction mFragmentTransaction = mFragmentManager.beginTransaction();
+                    mFragmentTransaction.replace(R.id.fragment_container, mHomeFragment);
+                    mFragmentTransaction.commit();
+                    mFragmentManager.executePendingTransactions();
+                    Toast.makeText(getApplicationContext(), "Fetch failed", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 }
