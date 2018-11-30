@@ -79,10 +79,8 @@ public class ScanFragment extends Fragment {
         // Yan-Jen: change MainActivity to wherever you need the scanned data
         // maybe a new Statistics Activity or fragment?
         Intent intent = new Intent(getActivity(), MainActivity.class);
-        for (String key : nutritionItems.keySet()) {
-            Log.i(TAG, key + " => " + nutritionItems.get(key));
-            intent.putExtra(key, nutritionItems.get(key));
-        }
+        NutritionInformation nutriInfo = nutriInfoBuilder.build();
+        intent.putExtra("info", nutriInfo);
         startActivity(intent);
     }
 
@@ -186,6 +184,9 @@ public class ScanFragment extends Fragment {
                                     while (matcher.find()) {
                                         String servingSize = matcher.group(1);
                                         String servingType = matcher.group(2);
+                                        int servingSizeInt = Integer.parseInt(servingSize);
+                                        nutriInfoBuilder.servingSize(servingSizeInt);
+                                        nutriInfoBuilder.servingType(servingType);
                                     }
                                 }
                             }
