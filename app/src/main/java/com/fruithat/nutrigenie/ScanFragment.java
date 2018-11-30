@@ -31,7 +31,7 @@ public class ScanFragment extends Fragment {
     private Bitmap bitmap;
     private FirebaseVisionTextRecognizer textRecognizer;
     private Button testScanButton;
-    private HashMap<String, Integer> nutritionItems;
+    private HashMap<String, Float> nutritionItems;
 
     private static final String TAG = "NutriGenie";
 
@@ -51,7 +51,7 @@ public class ScanFragment extends Fragment {
         // Don't destroy Fragment on reconfiguration
         setRetainInstance(true);
 
-        nutritionItems = new HashMap<String, Integer>();
+        nutritionItems = new HashMap<String, Float>();
 
         bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.nutrition_label_large);
         image = FirebaseVisionImage.fromBitmap(bitmap);
@@ -92,49 +92,76 @@ public class ScanFragment extends Fragment {
                                 String lineText = line.getText();
                                 if (lineText.contains("Protein")) {
                                     String[] parsedNutritionItem = lineText.split(" ");
-                                    Integer grams = parseGrams(parsedNutritionItem[1]);
+                                    Float grams = parseGrams(parsedNutritionItem[1]);
                                     nutritionItems.put(parsedNutritionItem[0], grams);
                                     parseGrams(parsedNutritionItem[1]);
                                 } else if (lineText.contains("Total Fat")) {
                                     String[] parsedNutritionItem = lineText.split(" ");
                                     String key = parsedNutritionItem[0] + " " + parsedNutritionItem[1];
-                                    Integer grams = parseGrams(parsedNutritionItem[2]);
+                                    Float grams = parseGrams(parsedNutritionItem[2]);
                                     nutritionItems.put(key, grams);
                                     parseGrams(parsedNutritionItem[2]);
                                 } else if (lineText.contains("Sodium")) {
                                     String[] parsedNutritionItem = lineText.split(" ");
-                                    Integer grams = parseGrams(parsedNutritionItem[1]);
+                                    Float grams = parseGrams(parsedNutritionItem[1]);
                                     nutritionItems.put(parsedNutritionItem[0], grams);
                                     parseGrams(parsedNutritionItem[1]);
                                 } else if (lineText.contains("Cholesterol")) {
                                     String[] parsedNutritionItem = lineText.split(" ");
-                                    Integer grams = parseGrams(parsedNutritionItem[1]);
+                                    Float grams = parseGrams(parsedNutritionItem[1]);
                                     nutritionItems.put(parsedNutritionItem[0], grams);
                                     parseGrams(parsedNutritionItem[1]);
                                 } else if (lineText.contains("Saturated Fat")) {
                                     String[] parsedNutritionItem = lineText.split(" ");
                                     String key = parsedNutritionItem[0] + " " + parsedNutritionItem[1];
-                                    Integer grams = parseGrams(parsedNutritionItem[2]);
+                                    Float grams = parseGrams(parsedNutritionItem[2]);
                                     nutritionItems.put(key, grams);
                                     parseGrams(parsedNutritionItem[2]);
                                  } else if (lineText.contains("Trans Fat")) {
                                     String[] parsedNutritionItem = lineText.split(" ");
                                     String key = parsedNutritionItem[0] + " " + parsedNutritionItem[1];
-                                    Integer grams = parseGrams(parsedNutritionItem[2]);
+                                    Float grams = parseGrams(parsedNutritionItem[2]);
                                     nutritionItems.put(key, grams);
                                     parseGrams(parsedNutritionItem[2]);
                                 } else if (lineText.contains("Dietary Fiber")) {
                                     String[] parsedNutritionItem = lineText.split(" ");
                                     String key = parsedNutritionItem[0] + " " + parsedNutritionItem[1];
-                                    Integer grams = parseGrams(parsedNutritionItem[2]);
+                                    Float grams = parseGrams(parsedNutritionItem[2]);
                                     nutritionItems.put(key, grams);
                                     parseGrams(parsedNutritionItem[2]);
                                 } else if (lineText.contains("Total Sugars")) {
                                     String[] parsedNutritionItem = lineText.split(" ");
                                     String key = parsedNutritionItem[0] + " " + parsedNutritionItem[1];
-                                    Integer grams = parseGrams(parsedNutritionItem[2]);
+                                    Float grams = parseGrams(parsedNutritionItem[2]);
                                     nutritionItems.put(key, grams);
                                     parseGrams(parsedNutritionItem[2]);
+                                } else if (lineText.contains("Vitamin D")) {
+                                    String[] parsedNutritionItem = lineText.split(" ");
+                                    String key = parsedNutritionItem[0] + " " + parsedNutritionItem[1];
+                                    Float grams = parseGrams(parsedNutritionItem[2]);
+                                    nutritionItems.put(key, grams);
+                                    parseGrams(parsedNutritionItem[2]);
+                                } else if (lineText.contains("Vitamin C")) {
+                                    String[] parsedNutritionItem = lineText.split(" ");
+                                    String key = parsedNutritionItem[0] + " " + parsedNutritionItem[1];
+                                    Float grams = parseGrams(parsedNutritionItem[2]);
+                                    nutritionItems.put(key, grams);
+                                    parseGrams(parsedNutritionItem[2]);
+                                } else if (lineText.contains("Calcium")) {
+                                    String[] parsedNutritionItem = lineText.split(" ");
+                                    Float grams = parseGrams(parsedNutritionItem[1]);
+                                    nutritionItems.put(parsedNutritionItem[0], grams);
+                                    parseGrams(parsedNutritionItem[1]);
+                                } else if (lineText.contains("Iron")) {
+                                    String[] parsedNutritionItem = lineText.split(" ");
+                                    Float grams = parseGrams(parsedNutritionItem[1]);
+                                    nutritionItems.put(parsedNutritionItem[0], grams);
+                                    parseGrams(parsedNutritionItem[1]);
+                                } else if (lineText.contains("Potassium")) {
+                                    String[] parsedNutritionItem = lineText.split(" ");
+                                    Float grams = parseGrams(parsedNutritionItem[1]);
+                                    nutritionItems.put(parsedNutritionItem[0], grams);
+                                    parseGrams(parsedNutritionItem[1]);
                                 }
                             }
                         }
@@ -152,10 +179,10 @@ public class ScanFragment extends Fragment {
                         });
     }
 
-    private int parseGrams(String gramsString) {
+    private float parseGrams(String gramsString) {
         int idxM = gramsString.indexOf("m");
         int idxG = gramsString.indexOf("g");
-        int result = -1;
+        float result = -1;
         if (idxM >= 0) {
             String num = gramsString.substring(0, idxM);
             // Sometimes Firebase interprests zeroes as O's so we have to check for this
@@ -163,13 +190,13 @@ public class ScanFragment extends Fragment {
             if (num.equals("O")) {
                 num = "0";
             }
-            result = Integer.parseInt(num);
+            result = Float.parseFloat(num);
         } else if (idxG >= 0) {
             String num = gramsString.substring(0, idxG);
             if (num.equals("O")) {
                 num = "0";
             }
-            result = Integer.parseInt(num);
+            result = Float.parseFloat(num);
         }
 
         return result;
