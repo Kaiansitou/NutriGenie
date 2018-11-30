@@ -105,24 +105,24 @@ public class MainActivity extends AppCompatActivity {
         signIn();
 
         NutritionHistory history = NutritionHistory.getInstance();
-//        history.addNutritionInformation("test", new NutritionInformationBuilder("cup", 1.5)
-//                .calcium(15)
-//                .calories(260)
-//                .caloriesFromFat(120)
-//                .carbohydrates(31)
-//                .cholesterol(30)
-//                .iron(4)
-//                .protein(5)
-//                .saturatedFat(5)
-//                .servingsPerContainer(2)
-//                .sodium(660)
-//                .sugar(5)
-//                .totalFat(13)
-//                .transFat(2)
-//                .vitaminA(4)
-//                .vitaminC(2)
-//                .build());
-//
+        history.addNutritionInformation("test", new NutritionInformationBuilder("cup", 1.5)
+               .calcium(15)
+               .calories(260)
+               .caloriesFromFat(120)
+                .carbohydrates(31)
+                .cholesterol(30)
+                .iron(4)
+                .protein(5)
+                .saturatedFat(5)
+                .servingsPerContainer(2)
+                .sodium(660)
+                .sugar(5)
+                .totalFat(13)
+                .transFat(2)
+                .vitaminA(4)
+                .vitaminC(2)
+                .build());
+
 //        history.getNutritionInformation(new Date(0), new Date(), null);
     }
 
@@ -154,7 +154,8 @@ public class MainActivity extends AppCompatActivity {
                                 break;
                             case R.id.sidebar_history:
                                 mFragmentTransaction.replace(R.id.fragment_container, mHistoryFragment);
-                                break;
+
+                               break;
                             case R.id.sidebar_about:
                                 mFragmentTransaction.replace(R.id.fragment_container, mAboutFragment);
                                 break;
