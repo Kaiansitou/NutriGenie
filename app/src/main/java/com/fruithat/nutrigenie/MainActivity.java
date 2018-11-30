@@ -80,29 +80,6 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
         signIn();
-
-//        NutritionHistory history = NutritionHistory.getInstance();
-//        history.addNutritionInformation("test", new NutritionInformationBuilder()
-//               .servingType("cup")
-//               .servingSize(1.5)
-//               .calcium(15)
-//               .calories(260)
-//               .caloriesFromFat(120)
-//                .carbohydrates(31)
-//                .cholesterol(30)
-//                .iron(4)
-//                .protein(5)
-//                .saturatedFat(5)
-//                .servingsPerContainer(2)
-//                .sodium(660)
-//                .sugar(5)
-//                .totalFat(13)
-//                .transFat(2)
-//                .vitaminA(4)
-//                .vitaminC(2)
-//                .build());
-
-//        history.getNutritionInformation(new Date(0), new Date(), null);
     }
 
     private void setUpToolbar() {

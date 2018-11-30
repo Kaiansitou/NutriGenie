@@ -16,7 +16,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_alignParentTop="true"
-                android:elevation="3dp"
+                android:elevation="5dp"
                 android:background="@color/colorPrimary"
                 android:theme="@style/ThemeOverlay.AppCompat.ActionBar"/>
 
@@ -32,7 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:elevation="3dp"
+                android:elevation="5dp"
                 app:menu="@menu/navigation"
                 style="@style/AppTheme"/>
     </RelativeLayout>
