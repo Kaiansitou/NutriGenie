@@ -13,10 +13,5 @@
                 android:id="@+id/sidebar_about"
                 android:icon="@drawable/ic_about2"
                 android:title="About"/>
-
-        <item
-                android:id="@+id/sidebar_contact"
-                android:icon="@drawable/ic_contact"
-                android:title="Contact us"/>
     </group>
 </menu>

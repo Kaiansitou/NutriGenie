@@ -73,31 +73,6 @@ public class MainActivity extends AppCompatActivity {
         mFragmentTransaction.add(R.id.fragment_container, mHomeFragment);
         mFragmentTransaction.commit();
         mFragmentManager.executePendingTransactions();
-
-        final BottomNavigationView navigation = findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(
-                new BottomNavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem item) {
-                        FragmentTransaction mFragmentTransaction = mFragmentManager.beginTransaction();
-
-                        switch (item.getItemId()) {
-                            case R.id.navigation_home:
-                                mFragmentTransaction.replace(R.id.fragment_container, mHomeFragment);
-                                break;
-                            case R.id.navigation_scan:
-                                mFragmentTransaction.replace(R.id.fragment_container, mScanFragment);
-                                break;
-                            case R.id.navigation_account:
-                                mFragmentTransaction.replace(R.id.fragment_container, mAccountFragment);
-                        }
-
-                        mFragmentTransaction.commit();
-                        mFragmentManager.executePendingTransactions();
-
-                        return true;
-                    }
-                });
     }
 
     @Override
@@ -166,16 +141,37 @@ public class MainActivity extends AppCompatActivity {
                                 actionbar.setTitle("About");
                                 mFragmentTransaction.replace(R.id.fragment_container, mAboutFragment);
                                 break;
-                            case R.id.sidebar_contact:
-                                actionbar.setTitle("Contact Us");
-                                mFragmentTransaction.replace(R.id.fragment_container, mContactFragment);
-                                break;
                         }
                         mFragmentTransaction.commit();
                         mFragmentManager.executePendingTransactions();
 
                         return true;
                     }
+                });
+
+        final BottomNavigationView navigation = findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(
+                item -> {
+                    FragmentTransaction mFragmentTransaction1 = mFragmentManager.beginTransaction();
+
+                    switch (item.getItemId()) {
+                        case R.id.navigation_home:
+                            actionbar.setTitle("Nutri Genie");
+                            mFragmentTransaction1.replace(R.id.fragment_container, mHomeFragment);
+                            break;
+                        case R.id.navigation_scan:
+                            actionbar.setTitle("Scan");
+                            mFragmentTransaction1.replace(R.id.fragment_container, mScanFragment);
+                            break;
+                        case R.id.navigation_account:
+                            actionbar.setTitle("Profile");
+                            mFragmentTransaction1.replace(R.id.fragment_container, mAccountFragment);
+                    }
+
+                    mFragmentTransaction1.commit();
+                    mFragmentManager.executePendingTransactions();
+
+                    return true;
                 });
     }
 
