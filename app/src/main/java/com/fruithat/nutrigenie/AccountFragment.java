@@ -1,100 +1,122 @@
 package com.fruithat.nutrigenie;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.view.View.OnClickListener;
-import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.Toast;
-import android.widget.RadioGroup;
-import android.widget.TextView;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.content.Context;
-import static android.content.Context.MODE_PRIVATE;
+import android.widget.*;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.*;
+
+import java.util.HashMap;
 
 public class AccountFragment extends Fragment {
 
+    private Button save;
+    private Button reset;
+    private Button calculate;
+    private EditText heightText;
+    private EditText weightText;
+    private EditText ageText;
+    private TextView result;
+    private RadioGroup gender;
+    private RadioButton male;
+    private RadioButton female;
+
+    private DatabaseReference mDatabase;
+    private FirebaseUser mCurrentUser;
+
+    private MainActivity mActivity;
+
+    public AccountFragment() {
+        super();
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         // Inflate the layout defined in quote_fragment.xml
         // The last parameter is false because the returned view does not need to be attached to the container ViewGroup
         View view = inflater.inflate(R.layout.fragment_account, container, false);
 
-        Button save = (Button)view.findViewById(R.id.save);
+        save = view.findViewById(R.id.save);
+        reset = view.findViewById(R.id.reset);
+        heightText = view.findViewById(R.id.height_value);
+        weightText = view.findViewById(R.id.weight_value);
+        ageText = view.findViewById(R.id.age_value);
+        result = view.findViewById(R.id.result_value);
+        gender = view.findViewById(R.id.gender_group);
+        male = view.findViewById(R.id.male);
+        female = view.findViewById(R.id.female);
+        calculate = view.findViewById(R.id.calculate);
 
+        save.setOnClickListener(v -> saveAccount());
 
-        save.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getContext(),"Profile Saved", Toast.LENGTH_LONG).show();
+        reset.setOnClickListener(v -> {
+            gender.clearCheck();
+            gender.check(R.id.male);
+
+            heightText.setText(null);
+            weightText.setText(null);
+            ageText.setText(null);
+            result.setText(null);
+        });
+
+        calculate.setOnClickListener(v -> {
+            int weight = Integer.parseInt(weightText.getText().toString());
+            double height = Double.parseDouble(heightText.getText().toString());
+            int age = Integer.parseInt(ageText.getText().toString());
+
+            if (female.isChecked()) {
+                double women_BMR = 10 * (weight * 0.45359237) + 6.25 * height - 5 * age - 161;
+
+                result.setText(String.valueOf((int) women_BMR));
+
+            } else if (male.isChecked()) {
+                double men_BMR = 10 * (weight * 0.45359237) + 6.25 * height - 5 * age + 5;
+
+                result.setText(String.valueOf((int) men_BMR));
+            } else {
+                Toast.makeText(getContext(), "Please Select Gender", Toast.LENGTH_LONG).show();
             }
         });
 
-        Button reset = (Button)view.findViewById(R.id.reset);
-
-        reset.setOnClickListener(new OnClickListener() {
+        mDatabase.child("account").child(mCurrentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onClick(View v) {
-                EditText a = view.findViewById(R.id.editText1);
-                EditText b = view.findViewById(R.id.editText3);
-                EditText c = view.findViewById(R.id.editText2);
-                TextView d = view.findViewById(R.id.textView12);
-                RadioGroup radioGroup;
-                radioGroup = (RadioGroup) view.findViewById(R.id.RGroup);
-                radioGroup.clearCheck();
-
-                if(a!=null || b!= null || c!=null || d!=null){
-                    a.setText(null);
-                    b.setText(null);
-                    c.setText(null);
-                    d.setText(null);
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    switch (data.getKey()) {
+                        case "height":
+                            heightText.setText(String.valueOf(data.getValue()));
+                            break;
+                        case "weight":
+                            weightText.setText(String.valueOf(data.getValue()));
+                            break;
+                        case "age":
+                            ageText.setText(String.valueOf(data.getValue()));
+                            break;
+                        case "gender":
+                            if (((Long) data.getValue()) == 1) {
+                                male.setChecked(true);
+                            } else {
+                                female.setChecked(true);
+                            }
+                            break;
+                        case "calories":
+                            result.setText(String.valueOf(data.getValue()));
+                    }
                 }
             }
-        });
-
-        Button calculate = (Button) view.findViewById(R.id.calculate);
-
-        calculate.setOnClickListener(new OnClickListener() {
 
             @Override
-            public void onClick(View v) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                RadioButton female = view.findViewById(R.id.Female);
-                RadioButton male = view.findViewById(R.id.Male);
-
-                EditText weightNum = view.findViewById(R.id.editText3);
-                int weight = Integer.parseInt(weightNum.getText().toString());
-                EditText cmNum = view.findViewById(R.id.editText1);
-                double height = Double.parseDouble(cmNum.getText().toString());
-                EditText yearNum = view.findViewById(R.id.editText2);
-                int year = Integer.parseInt(yearNum.getText().toString());
-
-                if (female.isChecked()) {
-
-                    double women_BMR = 10 * (weight * 0.45359237) + 6.25 * height - 5 * year - 161;
-                    int women = (int) women_BMR;
-
-                    TextView display = (TextView) view.findViewById(R.id.textView12);
-                    String value = String.valueOf(women);
-                    display.setText(value);
-
-                } else if (male.isChecked()){
-
-                    double men_BMR = 10 * (weight * 0.45359237) + 6.25 * height - 5 * year + 5;
-                    int men = (int) men_BMR;
-
-                    TextView display = (TextView) view.findViewById(R.id.textView12);
-                    String value = String.valueOf(men);
-                    display.setText(value);
-                } else {
-                    Toast.makeText(getContext(),"Please Select Gender", Toast.LENGTH_LONG).show();
-                }
             }
         });
 
@@ -107,6 +129,25 @@ public class AccountFragment extends Fragment {
 
         // Don't destroy Fragment on reconfiguration
         setRetainInstance(true);
+    }
+
+    private void saveAccount() {
+        if (result.getText() == null) {
+            Toast.makeText(getContext(), "Please calculate calories before saving.", Toast.LENGTH_LONG).show();
+        } else {
+            HashMap<String, Object> data = new HashMap<>(4);
+
+            data.put("height", Integer.parseInt(heightText.getText().toString()));
+            data.put("weight", Integer.parseInt(weightText.getText().toString()));
+            data.put("age", Integer.parseInt(ageText.getText().toString()));
+            data.put("gender", male.isChecked() ? 1 : 0);
+            data.put("calories", Integer.parseInt(result.getText().toString()));
+
+            mDatabase.child("account").child(mCurrentUser.getUid()).updateChildren(data);
+
+            BottomNavigationView nav = getActivity().findViewById(R.id.navigation);
+            nav.setSelectedItemId(R.id.navigation_home);
+        }
     }
 
 }

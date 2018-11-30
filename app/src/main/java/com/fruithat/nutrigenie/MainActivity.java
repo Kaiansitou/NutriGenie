@@ -18,7 +18,8 @@ import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.*;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import sharefirebasepreferences.crysxd.de.lib.SharedFirebasePreferences;
 import sharefirebasepreferences.crysxd.de.lib.SharedFirebasePreferencesContextWrapper;
 
@@ -178,6 +179,7 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -186,27 +188,7 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_SIGN_IN) {
-            if (resultCode == RESULT_OK) {
-                // Successfully signed in
-                final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-
-                // Create the user's preferences if they do not already exist
-                DatabaseReference user_preferences = mDatabase.child("preferences").child(currentUser.getUid());
-                user_preferences.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (!dataSnapshot.hasChild("calories")) {
-                            Preferences pref = new Preferences(2000);
-                            user_preferences.setValue(pref);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        System.out.println("The read failed: " + databaseError.getCode());
-                    }
-                });
-            } else {
+            if (resultCode != RESULT_OK) {
                 finish();
             }
         }
