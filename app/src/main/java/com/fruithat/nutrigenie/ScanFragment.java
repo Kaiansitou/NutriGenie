@@ -75,6 +75,8 @@ public class ScanFragment extends Fragment {
         });
     }
 
+
+
     private void startStatisticsActivity() {
         // Yan-Jen: change MainActivity to wherever you need the scanned data
         // maybe a new Statistics Activity or fragment?
@@ -209,6 +211,7 @@ public class ScanFragment extends Fragment {
         int idxM = gramsString.indexOf("m");
         int idxG = gramsString.indexOf("g");
         float result = -1;
+        // Sometimes the 0's are O's in mg/g amount
         gramsString = gramsString.replaceAll("(o|O)+", "0");
         if (idxM >= 0) {
             String num = gramsString.substring(0, idxM);
