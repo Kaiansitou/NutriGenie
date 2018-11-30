@@ -5,7 +5,6 @@
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/white"
         android:fitsSystemWindows="true">
 
     <RelativeLayout
@@ -17,27 +16,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_alignParentTop="true"
-                android:elevation="3dp"
+                android:elevation="5dp"
                 android:background="@color/colorPrimary"
                 android:theme="@style/ThemeOverlay.AppCompat.ActionBar"/>
 
         <FrameLayout
                 android:id="@+id/fragment_container"
-                android:layout_marginTop="?attr/actionBarSize"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:layout_below="@+id/toolbar"
+                android:layout_above="@+id/navigation"/>
 
         <android.support.design.widget.BottomNavigationView
                 android:id="@+id/navigation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:elevation="3dp"
+                android:elevation="5dp"
                 app:menu="@menu/navigation"
-                app:itemBackground="@color/colorPrimary"
-                app:itemIconTint="?android:attr/textColorSecondaryNoDisable"
-                app:itemTextColor="?android:attr/textColorSecondaryNoDisable"
-        />
+                style="@style/AppTheme"/>
     </RelativeLayout>
 
     <android.support.design.widget.NavigationView
