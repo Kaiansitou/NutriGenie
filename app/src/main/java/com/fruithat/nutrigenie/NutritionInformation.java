@@ -1,10 +1,12 @@
 package com.fruithat.nutrigenie;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import com.google.firebase.database.DataSnapshot;
 
 import java.util.HashMap;
 
-public class NutritionInformation {
+public class NutritionInformation implements Parcelable {
 
     private HashMap<String, Object> nutrients;
 
@@ -162,6 +164,7 @@ public class NutritionInformation {
     public HashMap<String, Object> getDatabaseHashMap() {
         return (HashMap<String, Object>) nutrients.clone();
     }
+
 
     public static class NutritionInformationBuilder {
         private String nServingType = "";
@@ -341,4 +344,30 @@ public class NutritionInformation {
             return new NutritionInformation(nServingType, nServingSize, nServingsPerContainer, nNutrients);
         }
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeSerializable(this.nutrients);
+    }
+
+    protected NutritionInformation(Parcel in) {
+        this.nutrients = (HashMap<String, Object>) in.readSerializable();
+    }
+
+    public static final Creator<NutritionInformation> CREATOR = new Creator<NutritionInformation>() {
+        @Override
+        public NutritionInformation createFromParcel(Parcel source) {
+            return new NutritionInformation(source);
+        }
+
+        @Override
+        public NutritionInformation[] newArray(int size) {
+            return new NutritionInformation[size];
+        }
+    };
 }
