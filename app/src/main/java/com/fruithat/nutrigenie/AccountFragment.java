@@ -12,7 +12,12 @@ import android.widget.RadioButton;
 import android.widget.Toast;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import org.w3c.dom.Text;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.content.Context;
+import static android.content.Context.MODE_PRIVATE;
+
+
 
 public class AccountFragment extends Fragment {
 
@@ -24,6 +29,7 @@ public class AccountFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_account, container, false);
 
         Button save = (Button)view.findViewById(R.id.save);
+
 
         save.setOnClickListener(new OnClickListener() {
             @Override
@@ -64,14 +70,18 @@ public class AccountFragment extends Fragment {
                 RadioButton female = view.findViewById(R.id.Female);
                 RadioButton male = view.findViewById(R.id.Male);
 
-                if (female.isChecked()) {
+                EditText weightNum = view.findViewById(R.id.editText3);
+                int weight = Integer.parseInt(weightNum.getText().toString());
+                EditText cmNum = view.findViewById(R.id.editText1);
+                double height = Double.parseDouble(cmNum.getText().toString());
+                EditText yearNum = view.findViewById(R.id.editText2);
+                int year = Integer.parseInt(yearNum.getText().toString());
 
-                    EditText weightNum = view.findViewById(R.id.editText3);
-                    int weight = Integer.parseInt(weightNum.getText().toString());
-                    EditText cmNum = view.findViewById(R.id.editText1);
-                    double height = Double.parseDouble(cmNum.getText().toString());
-                    EditText yearNum = view.findViewById(R.id.editText2);
-                    int year = Integer.parseInt(yearNum.getText().toString());
+                if(weightNum == null || cmNum == null || yearNum == null){
+                    Toast.makeText(getContext(),"Please enter your information", Toast.LENGTH_LONG).show();
+                }
+
+                if (female.isChecked()) {
 
                     double women_BMR = 10 * (weight * 0.45359237) + 6.25 * height - 5 * year - 161;
                     int women = (int) women_BMR;
@@ -81,13 +91,6 @@ public class AccountFragment extends Fragment {
                     display.setText(value);
 
                 } else if (male.isChecked()){
-
-                    EditText weightNum = view.findViewById(R.id.editText3);
-                    int weight = Integer.parseInt(weightNum.getText().toString());
-                    EditText cmNum = view.findViewById(R.id.editText1);
-                    double height = Double.parseDouble(cmNum.getText().toString());
-                    EditText yearNum = view.findViewById(R.id.editText2);
-                    int year = Integer.parseInt(yearNum.getText().toString());
 
                     double men_BMR = 10 * (weight * 0.45359237) + 6.25 * height - 5 * year + 5;
                     int men = (int) men_BMR;
@@ -102,7 +105,6 @@ public class AccountFragment extends Fragment {
         });
 
         return view;
-
     }
 
     @Override
