@@ -1,5 +1,6 @@
 package com.fruithat.nutrigenie;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,6 +13,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
@@ -104,26 +106,26 @@ public class MainActivity extends AppCompatActivity {
 
         signIn();
 
-        NutritionHistory history = NutritionHistory.getInstance();
-        history.addNutritionInformation("test", new NutritionInformationBuilder()
-               .servingType("cup")
-               .servingSize(1.5)
-               .calcium(15)
-               .calories(260)
-               .caloriesFromFat(120)
-                .carbohydrates(31)
-                .cholesterol(30)
-                .iron(4)
-                .protein(5)
-                .saturatedFat(5)
-                .servingsPerContainer(2)
-                .sodium(660)
-                .sugar(5)
-                .totalFat(13)
-                .transFat(2)
-                .vitaminA(4)
-                .vitaminC(2)
-                .build());
+//        NutritionHistory history = NutritionHistory.getInstance();
+//        history.addNutritionInformation("test", new NutritionInformationBuilder()
+//               .servingType("cup")
+//               .servingSize(1.5)
+//               .calcium(15)
+//               .calories(260)
+//               .caloriesFromFat(120)
+//                .carbohydrates(31)
+//                .cholesterol(30)
+//                .iron(4)
+//                .protein(5)
+//                .saturatedFat(5)
+//                .servingsPerContainer(2)
+//                .sodium(660)
+//                .sugar(5)
+//                .totalFat(13)
+//                .transFat(2)
+//                .vitaminA(4)
+//                .vitaminC(2)
+//                .build());
 
 //        history.getNutritionInformation(new Date(0), new Date(), null);
     }
@@ -152,16 +154,20 @@ public class MainActivity extends AppCompatActivity {
                         FragmentTransaction mFragmentTransaction = mFragmentManager.beginTransaction();
                         switch (menuItem.getItemId()) {
                             case R.id.sidebar_settings:
+                                actionbar.setTitle("Preferences");
                                 mFragmentTransaction.replace(R.id.fragment_container, mPreferencesFragment);
                                 break;
                             case R.id.sidebar_history:
+                                actionbar.setTitle("History");
                                 mFragmentTransaction.replace(R.id.fragment_container, mHistoryFragment);
 
                                break;
                             case R.id.sidebar_about:
+                                actionbar.setTitle("About");
                                 mFragmentTransaction.replace(R.id.fragment_container, mAboutFragment);
                                 break;
                             case R.id.sidebar_contact:
+                                actionbar.setTitle("Contact Us");
                                 mFragmentTransaction.replace(R.id.fragment_container, mContactFragment);
                                 break;
                         }
@@ -201,7 +207,25 @@ public class MainActivity extends AppCompatActivity {
                             .setAvailableProviders(providers)
                             .build(),
                     RC_SIGN_IN);
+        } else {
+            syncPreferences(currentUser);
         }
+    }
+
+    private void syncPreferences(FirebaseUser currentUser) {
+        mDatabase.child("preferences").child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot setting: dataSnapshot.getChildren()) {
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void setUpNewUser(FirebaseUser currentUser) {
@@ -236,6 +260,8 @@ public class MainActivity extends AppCompatActivity {
                         System.out.println("The read failed: " + databaseError.getCode());
                     }
                 });
+
+                syncPreferences(currentUser);
             } else {
                 Toast.makeText(getApplicationContext(), "Failed to sign in", Toast.LENGTH_SHORT).show();
             }
