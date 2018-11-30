@@ -90,6 +90,7 @@ public class ScanFragment extends Fragment {
                         for (FirebaseVisionText.TextBlock block: result.getTextBlocks()) {
                             for (FirebaseVisionText.Line line: block.getLines()) {
                                 String lineText = line.getText();
+                                Log.i(TAG, "string " + " => " + lineText);
                                 if (lineText.contains("Protein")) {
                                     String[] parsedNutritionItem = lineText.split(" ");
                                     Float grams = parseGrams(parsedNutritionItem[1]);
@@ -162,6 +163,12 @@ public class ScanFragment extends Fragment {
                                     Float grams = parseGrams(parsedNutritionItem[1]);
                                     nutritionItems.put(parsedNutritionItem[0], grams);
                                     parseGrams(parsedNutritionItem[1]);
+                                } else if (lineText.contains("Serving size")) {
+                                    String[] parsedNutritionItem = lineText.split(" ");
+                                   // String type =
+                                    Log.i(TAG, "aaaaaaa " + parsedNutritionItem[2]);
+                                    Log.i(TAG, parsedNutritionItem[3]);
+                                    //parseServingType(parsedNutritionItem[1]);
                                 }
                             }
                         }
@@ -201,4 +208,6 @@ public class ScanFragment extends Fragment {
 
         return result;
     }
+
+
 }
