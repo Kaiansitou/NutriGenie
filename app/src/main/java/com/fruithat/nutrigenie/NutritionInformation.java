@@ -8,6 +8,17 @@ import java.util.HashMap;
 
 public class NutritionInformation implements Parcelable {
 
+    public static final Creator<NutritionInformation> CREATOR = new Creator<NutritionInformation>() {
+        @Override
+        public NutritionInformation createFromParcel(Parcel source) {
+            return new NutritionInformation(source);
+        }
+
+        @Override
+        public NutritionInformation[] newArray(int size) {
+            return new NutritionInformation[size];
+        }
+    };
     private HashMap<String, Object> nutrients;
 
     private NutritionInformation(String servingType, double servingSize, double servingsPerContainer, HashMap<String, Double> nutrients) {
@@ -17,6 +28,10 @@ public class NutritionInformation implements Parcelable {
         this.nutrients.put("serving_size", servingSize);
         this.nutrients.put("servings_per_container", servingsPerContainer);
         this.nutrients.putAll(nutrients);
+    }
+
+    protected NutritionInformation(Parcel in) {
+        this.nutrients = (HashMap<String, Object>) in.readSerializable();
     }
 
     public static NutritionInformation parseSnapshot(DataSnapshot nutrientSnapshot) {
@@ -157,6 +172,10 @@ public class NutritionInformation implements Parcelable {
         return (double) nutrients.getOrDefault("iron", 0);
     }
 
+    public double getPotassium() {
+        return (double) nutrients.getOrDefault("potassium", 0);
+    }
+
     public double getCalcium() {
         return (double) nutrients.getOrDefault("calcium", 0);
     }
@@ -165,6 +184,15 @@ public class NutritionInformation implements Parcelable {
         return (HashMap<String, Object>) nutrients.clone();
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeSerializable(this.nutrients);
+    }
 
     public static class NutritionInformationBuilder {
         private String nServingType = "";
@@ -340,34 +368,13 @@ public class NutritionInformation implements Parcelable {
             return this;
         }
 
+        public NutritionInformationBuilder potassium(final double potassium) {
+            this.nNutrients.put("potassium", potassium);
+            return this;
+        }
+
         public NutritionInformation build() {
             return new NutritionInformation(nServingType, nServingSize, nServingsPerContainer, nNutrients);
         }
     }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeSerializable(this.nutrients);
-    }
-
-    protected NutritionInformation(Parcel in) {
-        this.nutrients = (HashMap<String, Object>) in.readSerializable();
-    }
-
-    public static final Creator<NutritionInformation> CREATOR = new Creator<NutritionInformation>() {
-        @Override
-        public NutritionInformation createFromParcel(Parcel source) {
-            return new NutritionInformation(source);
-        }
-
-        @Override
-        public NutritionInformation[] newArray(int size) {
-            return new NutritionInformation[size];
-        }
-    };
 }
