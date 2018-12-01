@@ -139,12 +139,12 @@ public class HomeFragment extends Fragment {
         data.setBarWidth(0.75f);
         stackedBarChart.setExtraTopOffset(75f);
         stackedBarChart.setExtraBottomOffset(10f);
-        stackedBarChart.setMaxVisibleValueCount(labels.size());
+
 
         set.setHighlightEnabled(false);
         stackedBarChart.setDrawGridBackground(false);
         stackedBarChart.setData(data);
-
+        xl.setLabelCount(labels.size());
 
         stackedBarChart.invalidate();
         return view;
