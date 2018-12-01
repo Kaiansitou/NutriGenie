@@ -3,6 +3,8 @@ package com.fruithat.nutrigenie;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -144,6 +146,9 @@ public class AccountFragment extends Fragment {
             data.put("calories", Integer.parseInt(result.getText().toString()));
 
             mDatabase.child("account").child(mCurrentUser.getUid()).updateChildren(data);
+
+            CoordinatorLayout coordinatorLayout = getActivity().findViewById(R.id.fragment_container);
+            Snackbar.make(coordinatorLayout, "Profile information saved", Snackbar.LENGTH_SHORT).show();
 
             BottomNavigationView nav = getActivity().findViewById(R.id.navigation);
             nav.setSelectedItemId(R.id.navigation_home);
