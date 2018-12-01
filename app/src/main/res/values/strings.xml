@@ -11,8 +11,23 @@
     <string name="title_height">Height</string>
     <string name="title_weight">Weight</string>
 
-    <string name="scan_button_text">Test Scan</string>
+    <string name="test_scan_button_text">Test Scan</string>
+    <string name="scan_button_text">Scan</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="height_label">Height</string>
+    <string name="height_hint">Enter height in cm</string>
+    <string name="weight_label">Weight</string>
+    <string name="weight_hint">Enter weight in lbs</string>
+    <string name="age_label">Age</string>
+    <string name="age_hint">Enter age</string>
+    <string name="gender_label">Gender:</string>
+    <string name="male_label">Male</string>
+    <string name="female_label">Female</string>
+    <string name="calculate_label">Calculate Daily Calories</string>
+    <string name="result_label">Result:</string>
+    <string name="intake_label">Daily Calories intake:</string>
+    <string name="save_label">Save</string>
+    <string name="reset_label">Reset</string>
 </resources>

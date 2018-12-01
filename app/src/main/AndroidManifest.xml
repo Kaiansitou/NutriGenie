@@ -1,12 +1,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.fruithat.nutrigenie">
+    <uses-feature android:name="android.hardware.camera"
+                  android:required="true" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+                     android:maxSdkVersion="18" />
 
     <application android:allowBackup="true"
                  android:label="@string/app_name"
-                 android:icon="@mipmap/ic_launcher"
-                 android:roundIcon="@mipmap/ic_launcher_round"
+                 android:icon="@mipmap/ic"
+                 android:roundIcon="@mipmap/ic_round"
                  android:supportsRtl="true"
-                 android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+                 android:theme="@style/AppTheme">
 
         <activity android:name=".MainActivity"
             android:label="@string/app_name">
@@ -15,6 +19,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.fruithat.nutrigenie.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"></meta-data>
+        </provider>
 
         <meta-data
                 android:name="com.google.firebase.ml.vision.DEPENDENCIES"
