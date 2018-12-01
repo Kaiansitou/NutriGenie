@@ -2,6 +2,9 @@ package com.fruithat.nutrigenie;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -14,15 +17,22 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import de.hdodenhof.circleimageview.CircleImageView;
 import sharefirebasepreferences.crysxd.de.lib.SharedFirebasePreferences;
 import sharefirebasepreferences.crysxd.de.lib.SharedFirebasePreferencesContextWrapper;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -113,14 +123,91 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
+        mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View view, float v) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull View view) {
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                CircleImageView circleImageView = findViewById(R.id.img_profile);
+                new Thread(() -> {
+                    try {
+                        java.net.URL url = new java.net.URL(currentUser.getPhotoUrl().toString());
+                        HttpURLConnection connection = (HttpURLConnection) url
+                                .openConnection();
+                        connection.setDoInput(true);
+                        connection.connect();
+                        InputStream input = connection.getInputStream();
+                        Bitmap myBitmap = BitmapFactory.decodeStream(input);
+                        circleImageView.post(() -> circleImageView.setImageBitmap(myBitmap));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }).start();
+
+                TextView email = findViewById(R.id.email);
+                email.setText(currentUser.getEmail());
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View view) {
+
+            }
+
+            @Override
+            public void onDrawerStateChanged(int i) {
+
+            }
+        });
 
         NavigationView navigationView = findViewById(R.id.nav_view);
+
+        final BottomNavigationView navigation = findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(
+                item -> {
+                    for (int i = 0 ; i < navigation.getMenu().size(); i++) {
+                        navigation.getMenu().getItem(i).setCheckable(false);
+                    }
+
+                    navigationView.getCheckedItem().setChecked(false);
+
+                    item.setChecked(true);
+
+                    FragmentTransaction mFragmentTransaction1 = mFragmentManager.beginTransaction();
+
+                    switch (item.getItemId()) {
+                        case R.id.navigation_home:
+                            actionbar.setTitle("Nutri Genie");
+                            mFragmentTransaction1.replace(R.id.fragment_container, mHomeFragment);
+                            break;
+                        case R.id.navigation_scan:
+                            actionbar.setTitle("Scan");
+                            mFragmentTransaction1.replace(R.id.fragment_container, mScanFragment);
+                            break;
+                        case R.id.navigation_account:
+                            actionbar.setTitle("Profile");
+                            mFragmentTransaction1.replace(R.id.fragment_container, mAccountFragment);
+                    }
+
+                    mFragmentTransaction1.commit();
+                    mFragmentManager.executePendingTransactions();
+
+                    return true;
+                });
+
         navigationView.setNavigationItemSelectedListener(
                 menuItem -> {
                     // set item as selected to persist highlight
                     menuItem.setChecked(true);
                     // close drawer when item is tapped
                     mDrawerLayout.closeDrawers();
+
+                    for (int i = 0 ; i < navigation.getMenu().size(); i++) {
+                        navigation.getMenu().getItem(i).setCheckable(false);
+                    }
 
                     // Add code here to update the UI based on the item selected
                     // For example, swap UI fragments here
@@ -141,31 +228,6 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
                             break;
                     }
                     mFragmentTransaction.commit();
-                    mFragmentManager.executePendingTransactions();
-
-                    return true;
-                });
-
-        final BottomNavigationView navigation = findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(
-                item -> {
-                    FragmentTransaction mFragmentTransaction1 = mFragmentManager.beginTransaction();
-
-                    switch (item.getItemId()) {
-                        case R.id.navigation_home:
-                            actionbar.setTitle("Nutri Genie");
-                            mFragmentTransaction1.replace(R.id.fragment_container, mHomeFragment);
-                            break;
-                        case R.id.navigation_scan:
-                            actionbar.setTitle("Scan");
-                            mFragmentTransaction1.replace(R.id.fragment_container, mScanFragment);
-                            break;
-                        case R.id.navigation_account:
-                            actionbar.setTitle("Profile");
-                            mFragmentTransaction1.replace(R.id.fragment_container, mAccountFragment);
-                    }
-
-                    mFragmentTransaction1.commit();
                     mFragmentManager.executePendingTransactions();
 
                     return true;
