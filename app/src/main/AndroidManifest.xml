@@ -33,6 +33,5 @@
         <meta-data
                 android:name="com.google.firebase.ml.vision.DEPENDENCIES"
                 android:value="ocr" />
-
     </application>
 </manifest>

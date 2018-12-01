@@ -71,23 +71,53 @@ public class AccountFragment extends Fragment {
         });
 
         calculate.setOnClickListener(v -> {
-            int weight = Integer.parseInt(weightText.getText().toString());
-            double height = Double.parseDouble(heightText.getText().toString());
-            int age = Integer.parseInt(ageText.getText().toString());
 
-            if (female.isChecked()) {
-                double women_BMR = 10 * (weight * 0.45359237) + 6.25 * height - 5 * age - 161;
+            int weight = 0;
+            double height = 0.0;
+            int age = 0;
 
-                result.setText(String.valueOf((int) women_BMR));
+                if (!weightText.getText().toString().equals("")) {
+                    weight = Integer.parseInt(weightText.getText().toString());
+                }
+                else if (weightText.getText().toString().equals("") && !heightText.getText().toString().equals("") &&
+                        !ageText.getText().toString().equals("")){
+                    Toast.makeText(getContext(), "Please enter your weight", Toast.LENGTH_LONG).show();
+                }
 
-            } else if (male.isChecked()) {
-                double men_BMR = 10 * (weight * 0.45359237) + 6.25 * height - 5 * age + 5;
+                if (!heightText.getText().toString().equals("")) {
+                    height = Double.parseDouble(heightText.getText().toString());
+                }
+                else if(!weightText.getText().toString().equals("") && heightText.getText().toString().equals("") &&
+                    !ageText.getText().toString().equals("")) {
+                    Toast.makeText(getContext(), "Please enter your height", Toast.LENGTH_LONG).show();
+                }
 
-                result.setText(String.valueOf((int) men_BMR));
-            } else {
-                Toast.makeText(getContext(), "Please Select Gender", Toast.LENGTH_LONG).show();
-            }
+                if (!ageText.getText().toString().equals("")) {
+                    age = Integer.parseInt(ageText.getText().toString());
+                }
+                else if (!weightText.getText().toString().equals("") && !heightText.getText().toString().equals("") &&
+                        ageText.getText().toString().equals("")){
+                    Toast.makeText(getContext(), "Please enter your age", Toast.LENGTH_LONG).show();
+                }
+
+                if(!weightText.getText().toString().equals("") && !heightText.getText().toString().equals("") &&
+                        !ageText.getText().toString().equals("")) {
+                    if (female.isChecked()) {
+                        double women_BMR = 10 * (weight * 0.45359237) + 6.25 * height - 5 * age - 161;
+
+                        result.setText(String.valueOf((int) women_BMR));
+
+                    } else if (male.isChecked()) {
+                        double men_BMR = 10 * (weight * 0.45359237) + 6.25 * height - 5 * age + 5;
+
+                        result.setText(String.valueOf((int) men_BMR));
+                    }
+                } else if((weightText.getText().toString().equals("") && heightText.getText().toString().equals("") &&
+                        ageText.getText().toString().equals(""))){
+                    Toast.makeText(getContext(), "Please enter your information", Toast.LENGTH_LONG).show();
+                }
         });
+
 
         mDatabase.child("account").child(mCurrentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
