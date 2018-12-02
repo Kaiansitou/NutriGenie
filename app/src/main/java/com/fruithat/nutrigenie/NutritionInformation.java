@@ -47,13 +47,13 @@ public class NutritionInformation implements Parcelable {
                     servingType = (String) nutrient.getValue();
                     break;
                 case "serving_size":
-                    servingSize = Double.parseDouble(String.valueOf(nutrient.getValue()));
+                    servingSize =  Double.parseDouble(nutrient.getValue().toString());
                     break;
                 case "servings_per_container":
-                    servingsPerContainer = (double) nutrient.getValue();
+                    servingsPerContainer =  Double.parseDouble(nutrient.getValue().toString());
                     break;
                 default:
-                    nutrients.put(nutrient.getKey(), (double) nutrient.getValue());
+                    nutrients.put(nutrient.getKey(), Double.parseDouble(nutrient.getValue().toString()));
             }
         }
 
