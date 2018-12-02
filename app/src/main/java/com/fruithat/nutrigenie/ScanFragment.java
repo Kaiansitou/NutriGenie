@@ -47,7 +47,7 @@ public class ScanFragment extends Fragment {
     private Button testScanButton;
     private Button scanButton;
     private NutritionInformation.NutritionInformationBuilder nutriInfoBuilder;
-    private HashMap<String, Float> nutritionItems;
+    private HashMap<String, Float> nutritionItems; // only used for debugging
     private ImageView imageView;
     private String mCurrentPhotoPath;
     static final int REQUEST_TAKE_PHOTO = 1;
@@ -74,9 +74,6 @@ public class ScanFragment extends Fragment {
         nutritionItems = new HashMap<String, Float>();
         nutriInfoBuilder = new NutritionInformation.NutritionInformationBuilder();
 
-        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.nutrition_label_large);
-        image = FirebaseVisionImage.fromBitmap(bitmap);
-
         textRecognizer = FirebaseVision.getInstance()
                 .getOnDeviceTextRecognizer();
     }
@@ -87,6 +84,8 @@ public class ScanFragment extends Fragment {
         testScanButton = getActivity().findViewById(R.id.test_scan_button);
         testScanButton.setOnClickListener(new Button.OnClickListener(){
             public void onClick(View v) {
+                bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.nutrition_label_large);
+                image = FirebaseVisionImage.fromBitmap(bitmap);
                 processLabel();
             }
         });
@@ -120,6 +119,7 @@ public class ScanFragment extends Fragment {
                 photoFile = createImageFile();
             } catch (IOException ex) {
                 // Error occurred while creating the File
+                Log.e(TAG, ex.getMessage());
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
@@ -182,88 +182,74 @@ public class ScanFragment extends Fragment {
                                     Float grams = parseGrams(parsedNutritionItem[1]);
                                     nutritionItems.put(parsedNutritionItem[0], grams);
                                     nutriInfoBuilder.protein(grams);
-                                    parseGrams(parsedNutritionItem[1]);
                                 } else if (lineText.contains("Total Fat")) {
                                     String[] parsedNutritionItem = lineText.split(" ");
                                     String key = parsedNutritionItem[0] + " " + parsedNutritionItem[1];
                                     Float grams = parseGrams(parsedNutritionItem[2]);
                                     nutritionItems.put(key, grams);
                                     nutriInfoBuilder.totalFat(grams);
-                                    parseGrams(parsedNutritionItem[2]);
                                 } else if (lineText.contains("Sodium")) {
                                     String[] parsedNutritionItem = lineText.split(" ");
                                     Float grams = parseGrams(parsedNutritionItem[1]);
                                     nutritionItems.put(parsedNutritionItem[0], grams);
                                     nutriInfoBuilder.sodium(grams);
-                                    parseGrams(parsedNutritionItem[1]);
                                 } else if (lineText.contains("Cholesterol")) {
                                     String[] parsedNutritionItem = lineText.split(" ");
                                     Float grams = parseGrams(parsedNutritionItem[1]);
                                     nutritionItems.put(parsedNutritionItem[0], grams);
                                     nutriInfoBuilder.cholesterol(grams);
-                                    parseGrams(parsedNutritionItem[1]);
                                 } else if (lineText.contains("Saturated Fat")) {
                                     String[] parsedNutritionItem = lineText.split(" ");
                                     String key = parsedNutritionItem[0] + " " + parsedNutritionItem[1];
                                     Float grams = parseGrams(parsedNutritionItem[2]);
                                     nutritionItems.put(key, grams);
                                     nutriInfoBuilder.saturatedFat(grams);
-                                    parseGrams(parsedNutritionItem[2]);
                                  } else if (lineText.contains("Trans Fat")) {
                                     String[] parsedNutritionItem = lineText.split(" ");
                                     String key = parsedNutritionItem[0] + " " + parsedNutritionItem[1];
                                     Float grams = parseGrams(parsedNutritionItem[2]);
                                     nutritionItems.put(key, grams);
                                     nutriInfoBuilder.transFat(grams);
-                                    parseGrams(parsedNutritionItem[2]);
                                 } else if (lineText.contains("Dietary Fiber")) {
                                     String[] parsedNutritionItem = lineText.split(" ");
                                     String key = parsedNutritionItem[0] + " " + parsedNutritionItem[1];
                                     Float grams = parseGrams(parsedNutritionItem[2]);
                                     nutritionItems.put(key, grams);
-                                    // Add dietary fiber to nutriInfoBuidler
-                                    parseGrams(parsedNutritionItem[2]);
+                                    nutriInfoBuilder.fiber(grams);
                                 } else if (lineText.contains("Total Sugars")) {
                                     String[] parsedNutritionItem = lineText.split(" ");
                                     String key = parsedNutritionItem[0] + " " + parsedNutritionItem[1];
                                     Float grams = parseGrams(parsedNutritionItem[2]);
                                     nutritionItems.put(key, grams);
                                     nutriInfoBuilder.sugar(grams);
-                                    parseGrams(parsedNutritionItem[2]);
                                 } else if (lineText.contains("Vitamin D")) {
                                     String[] parsedNutritionItem = lineText.split(" ");
                                     String key = parsedNutritionItem[0] + " " + parsedNutritionItem[1];
                                     Float grams = parseGrams(parsedNutritionItem[2]);
                                     nutritionItems.put(key, grams);
                                     nutriInfoBuilder.vitaminD(grams);
-                                    parseGrams(parsedNutritionItem[2]);
                                 } else if (lineText.contains("Vitamin C")) {
                                     String[] parsedNutritionItem = lineText.split(" ");
                                     String key = parsedNutritionItem[0] + " " + parsedNutritionItem[1];
                                     Float grams = parseGrams(parsedNutritionItem[2]);
                                     nutritionItems.put(key, grams);
                                     nutriInfoBuilder.vitaminC(grams);
-                                    parseGrams(parsedNutritionItem[2]);
                                 } else if (lineText.contains("Calcium")) {
                                     String[] parsedNutritionItem = lineText.split(" ");
                                     Float grams = parseGrams(parsedNutritionItem[1]);
                                     nutritionItems.put(parsedNutritionItem[0], grams);
                                     nutriInfoBuilder.calcium(grams);
-                                    parseGrams(parsedNutritionItem[1]);
                                 } else if (lineText.contains("Iron")) {
                                     String[] parsedNutritionItem = lineText.split(" ");
                                     Float grams = parseGrams(parsedNutritionItem[1]);
                                     nutritionItems.put(parsedNutritionItem[0], grams);
                                     nutriInfoBuilder.iron(grams);
-                                    parseGrams(parsedNutritionItem[1]);
                                 } else if (lineText.contains("Potassium")) {
                                     String[] parsedNutritionItem = lineText.split(" ");
                                     Float grams = parseGrams(parsedNutritionItem[1]);
                                     nutritionItems.put(parsedNutritionItem[0], grams);
-                                    // Add potassium to nutriBuilderInfo
-                                    parseGrams(parsedNutritionItem[1]);
+                                    nutriInfoBuilder.potassium(grams);
                                 } else if (lineText.contains("Serving size")) {
-                                    Log.i(TAG, lineText);
                                     Pattern pattern = Pattern.compile("Serving size (\\d) (\\w+).*");
                                     Matcher matcher = pattern.matcher(lineText);
                                     while (matcher.find()) {
@@ -284,8 +270,8 @@ public class ScanFragment extends Fragment {
                         new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Log.i(TAG, "FAILURE!");
-                                Log.i(TAG, e.getMessage());
+                                Log.e(TAG, "FAILURE!");
+                                Log.e(TAG, e.getMessage());
                             }
                         });
     }
