@@ -20,20 +20,22 @@ import com.github.mikephil.charting.components.XAxis.XAxisPosition;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.components.Legend;
 
-
+import android.util.Log;
 
 import com.github.mikephil.charting.formatter.PercentFormatter;
 
 import android.graphics.Color;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
 public class HomeFragment extends Fragment {
-
+    String TAG = "Home Fragment";
     public HomeFragment() {
 
     }
@@ -45,6 +47,36 @@ public class HomeFragment extends Fragment {
         // The last parameter is false because the returned view does not need to be attached to the container ViewGroup
         View view =  inflater.inflate(R.layout.fragment_home, container, false);
         String date = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()).format(new Date());
+
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss"); // here set the pattern as you date in string was containing like date/month/year
+
+        try {
+            Date startTime = sdf.parse("12/1/2018");
+            Date endTime = sdf.parse("12/2/2018");
+            NutritionHistory instance = NutritionHistory.getInstance();
+            NutritionInformation.NutritionInformationBuilder nb = new NutritionInformation.NutritionInformationBuilder()
+                    .calcium(1.0)
+                    .carbohydrates(8.0)
+                    .fiber(17.0)
+                    .vitaminA(1.0)
+                    .vitaminC(14.0)
+                    .iron(1.0)
+                    .calcium(1.0)
+                    .servingSize(1.0)
+                    .servingsPerContainer(1.0)
+                    .servingType("Cup");
+            NutritionInformation n = nb.build();
+            instance.addNutritionInformation("Apple",n);
+            instance.getNutritionInformation(startTime, endTime, new NutritionHistoryCallback() {
+                @Override
+                public void onDataReceived(HashMap<Long, NutritionInformation> nutritionInformation) {
+                    Log.i(TAG, "Data Size: " + nutritionInformation.toString());
+                }
+            });
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         HorizontalBarChart stackedBarChart = (HorizontalBarChart) view.findViewById(R.id.home_bar_chart);
 
         stackedBarChart.setDrawBarShadow(false);
@@ -68,7 +100,7 @@ public class HomeFragment extends Fragment {
 
         ArrayList<BarEntry> entries = new ArrayList<>();
         entries.add(new BarEntry(0f, new float[] { 10f, 90f, 0f }));
-        entries.add(new BarEntry(1f, new float[] { 0f, 0f, 150f}));
+        entries.add(new BarEntry(1f, new float[] { 0f, 0f, 101f}));
         entries.add(new BarEntry(2f, new float[] { 90f, 10f, 0f }));
         entries.add(new BarEntry(3f, new float[] { 7f, 93f, 0f }));
         entries.add(new BarEntry(4f, new float[] { 33f, 67f, 0f }));
@@ -76,6 +108,8 @@ public class HomeFragment extends Fragment {
         entries.add(new BarEntry(6f, new float[] { 10f, 90f, 0f }));
         entries.add(new BarEntry(7f, new float[] { 77f, 23f, 0f }));
         entries.add(new BarEntry(8f, new float[] { 1f, 99f, 0f }));
+        entries.add(new BarEntry(9f, new float[] { 100f, 0f, 0f }));
+        entries.add(new BarEntry(10f, new float[] { 0f, 100f, 0f }));
         //Sodium, Dietary Fiber, Saturated Fat, Total Sugars, Total Fat, Cholesterol and Protein
 
 
@@ -100,6 +134,8 @@ public class HomeFragment extends Fragment {
         labels.add("Dietary Fiber");
         labels.add("Protein");
         labels.add("Iron");
+        labels.add("Vitamin C");
+        labels.add("Vitamin A");
 
         xl.setValueFormatter(new IAxisValueFormatter() {
             @Override
@@ -129,7 +165,7 @@ public class HomeFragment extends Fragment {
         stackedBarChart.moveViewToX(5);
         BarDataSet set = new BarDataSet(entries, "");
         set.setStackLabels(new String[]{
-                "% of Daily Value Consumed", "% of Daily Value Available", "Exceeded % of Daily Value"
+                "% of Daily Value Consumed", "% of Daily Value Available", "% of Daily Value Consumed (Exceeded)"
         });
         set.setColors(MY_COLORS[0],MY_COLORS[1], MY_COLORS[2]);
         set.setValueTextSize(12f);
@@ -137,7 +173,7 @@ public class HomeFragment extends Fragment {
         xl.setTextSize(13f);
         BarData data = new BarData(set);
         data.setBarWidth(0.75f);
-        stackedBarChart.setExtraTopOffset(75f);
+        stackedBarChart.setExtraTopOffset(10f);
         stackedBarChart.setExtraBottomOffset(10f);
 
 
