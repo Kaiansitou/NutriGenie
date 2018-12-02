@@ -16,6 +16,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -143,8 +144,8 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
                         InputStream input = connection.getInputStream();
                         Bitmap myBitmap = BitmapFactory.decodeStream(input);
                         circleImageView.post(() -> circleImageView.setImageBitmap(myBitmap));
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    } catch (Exception e) {
+                        Log.i("NutriGenie", "Could not get a photo");
                     }
                 }).start();
 
