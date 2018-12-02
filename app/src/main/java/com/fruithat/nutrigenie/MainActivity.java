@@ -172,8 +172,6 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
                         navigation.getMenu().getItem(i).setCheckable(false);
                     }
 
-                    navigationView.getCheckedItem().setChecked(false);
-
                     item.setChecked(true);
 
                     FragmentTransaction mFragmentTransaction1 = mFragmentManager.beginTransaction();
