@@ -156,7 +156,7 @@ public class NutritionInformation implements Parcelable {
         return (double) nutrients.getOrDefault("niacin", 0);
     }
 
-    public double getPanthotenicAcid() {
+    public double getPantothenicAcid() {
         return (double) nutrients.getOrDefault("pantothenic_acid", 0);
     }
 

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/constraint"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.fruithat.nutrigenie.MainActivity"
+>
+
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <com.github.mikephil.charting.charts.PieChart android:layout_width="match_parent"
+                                                      android:layout_height="match_parent"
+                                                      android:id="@+id/total_calorie_pie_chart"
+                                                      android:layout_weight="4">
+        </com.github.mikephil.charting.charts.PieChart>
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" android:layout_weight="2">
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="25dp" android:id="@+id/nutrition_breakdown"
+                    android:textColor="@android:color/black"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="40dp"
+                    android:text="Nutrition Breakdown" android:textAlignment="center" android:textSize="18sp"
+                    android:textStyle="bold" android:lineSpacingExtra="30sp"/>
+            <com.github.mikephil.charting.charts.HorizontalBarChart android:layout_width="match_parent"
+                                                                    android:layout_height="match_parent"
+                                                                    android:id="@+id/home_bar_chart"
+            >
+            </com.github.mikephil.charting.charts.HorizontalBarChart>
+        </LinearLayout>
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

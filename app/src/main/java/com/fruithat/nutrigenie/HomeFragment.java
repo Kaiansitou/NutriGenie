@@ -1,30 +1,23 @@
 package com.fruithat.nutrigenie;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.*;
-import android.widget.RelativeLayout;
-import com.github.mikephil.charting.*;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.components.*;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.XAxis.XAxisPosition;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
-import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.data.*;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.YAxis;
+
+import com.github.mikephil.charting.formatter.*;
 
 import android.util.Log;
 
 import com.github.mikephil.charting.formatter.PercentFormatter;
 
 import android.graphics.Color;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -36,6 +29,9 @@ import java.util.Locale;
 
 public class HomeFragment extends Fragment {
     String TAG = "Home Fragment";
+    int green = Color.rgb(5,205,110); //Green
+    int light_gray = Color.rgb(220,220,220); //Light Gray
+    int red = Color.rgb(223,61,61); //Red
     public HomeFragment() {
 
     }
@@ -46,13 +42,14 @@ public class HomeFragment extends Fragment {
         // Inflate the layout defined in fragment_home.xml
         // The last parameter is false because the returned view does not need to be attached to the container ViewGroup
         View view =  inflater.inflate(R.layout.fragment_home, container, false);
+
         String date = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()).format(new Date());
 
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss"); // here set the pattern as you date in string was containing like date/month/year
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:m:ss"); // here set the pattern as you date in string was containing like date/month/year
 
         try {
-            Date startTime = sdf.parse("12/1/2018");
-            Date endTime = sdf.parse("12/2/2018");
+            Date startTime = sdf.parse(date + " 00:00:00");
+            Date endTime = sdf.parse(date + " 23:59:59");
             NutritionHistory instance = NutritionHistory.getInstance();
             NutritionInformation.NutritionInformationBuilder nb = new NutritionInformation.NutritionInformationBuilder()
                     .calcium(1.0)
@@ -66,123 +63,113 @@ public class HomeFragment extends Fragment {
                     .servingsPerContainer(1.0)
                     .servingType("Cup");
             NutritionInformation n = nb.build();
-            instance.addNutritionInformation("Apple",n);
+
+            Log.i(TAG, "Data added");
+            //instance.addNutritionInformation("Apple",n);
             instance.getNutritionInformation(startTime, endTime, new NutritionHistoryCallback() {
                 @Override
                 public void onDataReceived(HashMap<Long, NutritionInformation> nutritionInformation) {
-                    Log.i(TAG, "Data Size: " + nutritionInformation.toString());
+                    for (Long k: nutritionInformation.keySet()) {
+                        Log.i(TAG, "Value: " + String.valueOf(nutritionInformation.get(k).getCalcium()));
+                    }
                 }
             });
 
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        HorizontalBarChart stackedBarChart = (HorizontalBarChart) view.findViewById(R.id.home_bar_chart);
-
-        stackedBarChart.setDrawBarShadow(false);
-
-        //stackedBarChart.setDrawValueAboveBar(true);
-
-        stackedBarChart.getDescription().setEnabled(false);
-
-        Legend l = stackedBarChart.getLegend();
-        l.setEnabled(true);
-
-
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
-        //l.setOrientation(Legend.LegendOrientation.VERTICAL);
-        l.setDrawInside(false);
-        l.setFormSize(15f);
-        l.setTextSize(15f);
-        l.setXEntrySpace(20f);
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
-        l.setWordWrapEnabled(true);
-
-        ArrayList<BarEntry> entries = new ArrayList<>();
-        entries.add(new BarEntry(0f, new float[] { 10f, 90f, 0f }));
-        entries.add(new BarEntry(1f, new float[] { 0f, 0f, 101f}));
-        entries.add(new BarEntry(2f, new float[] { 90f, 10f, 0f }));
-        entries.add(new BarEntry(3f, new float[] { 7f, 93f, 0f }));
-        entries.add(new BarEntry(4f, new float[] { 33f, 67f, 0f }));
-        entries.add(new BarEntry(5f, new float[] { 55f, 45f, 0f }));
-        entries.add(new BarEntry(6f, new float[] { 10f, 90f, 0f }));
-        entries.add(new BarEntry(7f, new float[] { 77f, 23f, 0f }));
-        entries.add(new BarEntry(8f, new float[] { 1f, 99f, 0f }));
-        entries.add(new BarEntry(9f, new float[] { 100f, 0f, 0f }));
-        entries.add(new BarEntry(10f, new float[] { 0f, 100f, 0f }));
-        //Sodium, Dietary Fiber, Saturated Fat, Total Sugars, Total Fat, Cholesterol and Protein
-
-
-        final int[] MY_COLORS = {
-                Color.rgb(66,81,181), //Blue
-                Color.rgb(220,220,220), //Light Gray
-                Color.rgb(195,23,23) //Red
+        String[] allNutritionNames = {
+                "Calcium",
+                "Potassium",
+                "Iron",
+                "Folate",
+                "Biotin",
+                "Pantothenic Acid",
+                "Niacin",
+                "Riboflavin",
+                "Thiamin",
+                "Vitamin K",
+                "Vitamin E",
+                "Vitamin D",
+                "Vitamin C",
+                "Vitamin B12",
+                "Vitamin B6",
+                "Vitamin A",
+                "Protein",
+                "Sugar",
+                "Fiber",
+                "Carbohydrates",
+                "Sodium",
+                "Cholesterol",
+                "Trans Fat",
+                "Saturated Fat",
+                "Total Fat"
         };
 
-        XAxis xl = stackedBarChart.getXAxis();
-        xl.setPosition(XAxisPosition.BOTTOM);
-        xl.setDrawAxisLine(true);
-        xl.setDrawGridLines(false);
-
-        ArrayList<String> labels = new ArrayList<>();
-        labels.add("Sodium");
-        labels.add("Total Sugars");
-        labels.add("Saturated Fat");
-        labels.add("Calcium");
-        labels.add("Carbohydrates");
-        labels.add("Cholesterol");
-        labels.add("Dietary Fiber");
-        labels.add("Protein");
-        labels.add("Iron");
-        labels.add("Vitamin C");
-        labels.add("Vitamin A");
-
-        xl.setValueFormatter(new IAxisValueFormatter() {
-            @Override
-            public String getFormattedValue(float value, AxisBase axis) {
-
-                return labels.get((int) value);
-            }
-
+        BarChart stackedBarChart = new BarChart(view.findViewById(R.id.home_bar_chart), allNutritionNames);
+        stackedBarChart.changePreferences(new String[]{"Trans Fat",
+                "Saturated Fat",
+                "Total Fat"});
+        HorizontalBarChart chart = stackedBarChart.getChart();
+        ArrayList<BarEntry> entries = stackedBarChart.getEntries();
+        BarDataSet barDataSet = new BarDataSet(entries, "");
+        barDataSet.setStackLabels(new String[]{
+                "% of Daily Value Consumed", "% of Daily Value Available", "Total % Consumed (Exceeded)"
         });
 
-        YAxis yl = stackedBarChart.getAxisLeft();
-        yl.setDrawAxisLine(true);
-        yl.setDrawGridLines(true);
-        yl.setAxisMinimum(0f);
-        stackedBarChart.setFitBars(true);
+        barDataSet.setColors(green, light_gray, red); // Set Stacked Bar Colors
+        barDataSet.setValueTextSize(15f);
+        barDataSet.setHighlightEnabled(false); // Turn off Bar Highlight when Selected
+        barDataSet.setAxisDependency(YAxis.AxisDependency.RIGHT);
 
+        BarData data = new BarData(barDataSet);
+        data.setBarWidth(0.75f); // Width of Bars\
+        chart.setData(data);
 
-        YAxis yr = stackedBarChart.getAxisRight();
-        yr.setDrawAxisLine(true);
-        yr.setDrawGridLines(false);
-        yr.setAxisMinimum(0f);
-        stackedBarChart.setFitBars(true);
-        stackedBarChart.animateY(2500);
+        chart.getXAxis().setLabelCount(entries.size());
 
-        stackedBarChart.setScaleEnabled(false);
-        stackedBarChart.setVisibleXRangeMaximum(labels.size()); // allow 20 values to be displayed at once on the x-axis, not more
-        stackedBarChart.moveViewToX(5);
-        BarDataSet set = new BarDataSet(entries, "");
-        set.setStackLabels(new String[]{
-                "% of Daily Value Consumed", "% of Daily Value Available", "% of Daily Value Consumed (Exceeded)"
-        });
-        set.setColors(MY_COLORS[0],MY_COLORS[1], MY_COLORS[2]);
-        set.setValueTextSize(12f);
-        set.setAxisDependency(YAxis.AxisDependency.RIGHT);
-        xl.setTextSize(13f);
-        BarData data = new BarData(set);
-        data.setBarWidth(0.75f);
-        stackedBarChart.setExtraTopOffset(10f);
-        stackedBarChart.setExtraBottomOffset(10f);
+        // Enable Vertical Scrolling
+        chart.setVisibleXRangeMaximum(8f);
+        chart.moveViewTo(0,chart.getAxisLeft().getAxisMaximum(), YAxis.AxisDependency.LEFT);
+        chart.invalidate();
 
+        PieChart pieChart = (PieChart) view.findViewById(R.id.total_calorie_pie_chart);
+        pieChart.setHoleRadius(80f);
+        pieChart.setTransparentCircleRadius(85f);
+        pieChart.setCenterText("Calories\n1200/2000");
+        pieChart.setCenterTextSize(17f);
+        pieChart.setCenterTextColor(Color.GRAY);
+        pieChart.setExtraTopOffset(10f);
+        pieChart.setExtraBottomOffset(20f);
+        pieChart.setExtraLeftOffset(25f);
+        pieChart.setExtraRightOffset(25f);
+        pieChart.setUsePercentValues(true);
 
-        set.setHighlightEnabled(false);
-        stackedBarChart.setDrawGridBackground(false);
-        stackedBarChart.setData(data);
-        xl.setLabelCount(labels.size());
+        pieChart.getLegend().setEnabled(false);
+        pieChart.setDescription(null);
 
-        stackedBarChart.invalidate();
+        ArrayList<PieEntry> pieData = new ArrayList<>();
+
+        //pieData.add(new PieEntry(0.4f,"Calories Available"));
+        //pieData.add(new PieEntry(0.6f,"Calories Consumed"));
+        pieData.add(new PieEntry(2000f - 1263f,"Calories Available"));
+        pieData.add(new PieEntry(1263f,"Calories Consumed"));
+        PieDataSet set2 = new PieDataSet(pieData, "");
+        pieChart.setDrawSliceText(false);
+        set2.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
+        set2.setValueLinePart1Length(0.05f);
+        set2.setValueLinePart2Length(0.5f);
+        set2.setValueFormatter(new PercentFormatter());
+        pieChart.setRotationEnabled(false);
+        PieData data2 = new PieData(set2);
+
+        set2.setValueTextSize(15f);
+        set2.setValueTextColor(Color.BLACK);
+        set2.setColors(light_gray,green);
+        //set2.setColors(Color.RED);
+        pieChart.setData(data2);
+        pieChart.invalidate();
+
         return view;
     }
 
@@ -196,6 +183,4 @@ public class HomeFragment extends Fragment {
 
 
     }
-
-
 }
