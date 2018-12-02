@@ -47,15 +47,39 @@ public class HistoryFragment extends Fragment {
     private void drawChart() {
         historyChart.setBackgroundColor(Color.WHITE);
         historyChart.setDrawBorders(true);
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy"); // here set the pattern as you date in string was containing like date/month/year
-
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd"); // here set the pattern as you date in string was containing like date/month/year
+        ArrayList<String> xAxis = new ArrayList<>();
+        ArrayList<Float> calories = new ArrayList<>();
+        ArrayList<Float> calcium = new ArrayList<>();
+        ArrayList<Float> sodium = new ArrayList<>();
+        ArrayList<Float> carbs = new ArrayList<>();
+        ArrayList<Float> cholestrol = new ArrayList<>();
+        ArrayList<Float> iron = new ArrayList<>();
+        ArrayList<Float> protien = new ArrayList<>();
+        ArrayList<Float> sugar = new ArrayList<>();
+        ArrayList<Float> transFat = new ArrayList<>();
+        ArrayList<Float> saturatedFat = new ArrayList<>();
         try {
             Date dayStart = sdf.parse("11/20/2019");
             Date dayEnd = sdf.parse("11/27/2019");
-            NutritionHistory.getInstance().getNutritionInformation(dayStart, dayEnd, new NutritionHistoryCallback() {
+
+            NutritionHistory.getInstance().getNutritionInformation(new Date(0), new Date(), new NutritionHistoryCallback() {
                 @Override
                 public void onDataReceived(HashMap<Long, NutritionInformation> nutritionInformation) {
-                  //  nutritionInformation.get()
+                    for(Long day: nutritionInformation.keySet()) {
+                        xAxis.add(sdf.format(new Date(day)).toString());
+                        calories.add((float) nutritionInformation.get(day).getCalories());
+                        calcium.add((float)nutritionInformation.get(day).getCalcium());
+                        sodium.add((float)nutritionInformation.get(day).getSodium());
+                        carbs.add((float)nutritionInformation.get(day).getCarbohydrates());
+                        cholestrol.add((float)nutritionInformation.get(day).getCholesterol());
+                        iron.add((float)nutritionInformation.get(day).getIron());
+                        protien.add((float)nutritionInformation.get(day).getProtein());
+                        sugar.add((float)nutritionInformation.get(day).getSugar());
+                        transFat.add((float)nutritionInformation.get(day).getTransFat());
+                        saturatedFat.add((float)nutritionInformation.get(day).getSaturatedFat());
+                    }
+
                 }
             });
 
@@ -63,49 +87,47 @@ public class HistoryFragment extends Fragment {
             e.printStackTrace();
         }
 
+  //      int[] tempdata1 = new int[]{30,23,20,30,23,21,20,12,33,22,11,23,45,61,43,29,11,93,22,11,34,55,22,11};
+   //     int[] tempdata2 = new int[]{39,22,11,16,12,20,30,23,20,30,23,21,20,12,33,22,11,23,45,60,43,21,11,93};
 
-
-        int[] tempdata1 = new int[]{30,23,20,30,23,21,20,12,33,22,11,23,45,61,43,29,11,93,22,11,34,55,22,11};
-        int[] tempdata2 = new int[]{39,22,11,16,12,20,30,23,20,30,23,21,20,12,33,22,11,23,45,60,43,21,11,93};
-
-        LineDataSet dataCalories = addValues("Calories",tempdata1);
+        LineDataSet dataCalories = addValues("Calories",calories);
         dataCalories.setColor(Color.RED);
         dataCalories.setLineWidth(1f);
 
-        LineDataSet dataCalcium = addValues("Calcium",tempdata1);
-        dataCalcium.setColor(Color.GRAY);
+        LineDataSet dataCalcium = addValues("Calcium",calcium);
+        dataCalcium.setColor(Color.red(10));
         dataCalcium.setLineWidth(1f);
 
-        LineDataSet dataSodium = addValues("Sodium", tempdata2);
+        LineDataSet dataSodium = addValues("Sodium", sodium);
         dataSodium.setColor(Color.BLUE);
         dataCalcium.setLineWidth(1f);
 
-        LineDataSet dataCarbs = addValues("Carbohydrates",tempdata1);
+        LineDataSet dataCarbs = addValues("Carbohydrates",carbs);
         dataCarbs.setColor(Color.GREEN);
 
-        LineDataSet dataCholesterol = addValues("Cholesterol", tempdata2);
+        LineDataSet dataCholesterol = addValues("Cholesterol", cholestrol);
         dataCholesterol.setColor(Color.YELLOW);
 
-        LineDataSet dataIron = addValues("Iron",tempdata1);
+        LineDataSet dataIron = addValues("Iron",iron);
         dataIron.setColor(Color.BLACK);
 
-        LineDataSet dataProtein = addValues("Protein", tempdata2);
+        LineDataSet dataProtein = addValues("Protein", protien);
         dataProtein.setColor(Color.CYAN);
 
-        LineDataSet dataSugar = addValues("Sugar",tempdata1);
+        LineDataSet dataSugar = addValues("Sugar",sugar);
         dataSugar.setColor(Color.MAGENTA);
 
-        LineDataSet dataTransFat = addValues("TransFat", tempdata2);
-        dataTransFat.setColor(Color.LTGRAY);
+        LineDataSet dataTransFat = addValues("TransFat", transFat);
+        dataTransFat.setColor(Color.green(100));
 
-        LineDataSet dataSaturatedFat = addValues("Saturated Fat", tempdata2);
+        LineDataSet dataSaturatedFat = addValues("Saturated Fat", saturatedFat);
         dataSaturatedFat.setColor(Color.DKGRAY);
 
         LineData lineData = new LineData(dataCalories, dataCalcium, dataSodium, dataCarbs, dataCholesterol, dataIron, dataProtein, dataSaturatedFat,
                 dataSugar, dataTransFat);
         historyChart.setData(lineData);
 
-        ArrayList<String> xAxis = new ArrayList<>();
+       /* ArrayList<String> xAxis = new ArrayList<>();
         for(int i = 0; i < tempdata1.length/7; i++) {
             xAxis.add("Mon");
             xAxis.add("Tues");
@@ -114,27 +136,28 @@ public class HistoryFragment extends Fragment {
             xAxis.add("Fri");
             xAxis.add("Sun");
             xAxis.add("Sat");
-        }
+        }*/
 
 
         historyChart.getXAxis().setValueFormatter(new MyXAxisValueFormatter(xAxis));
         historyChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
-
+        historyChart.enableScroll();
         Legend l = historyChart.getLegend();
         l.setEnabled(true);
         l.setWordWrapEnabled(true);
+     //   l.setXEntrySpace(5f);
+        l.setTextSize(15);
 
 
         historyChart.invalidate();
     }
 
-    private LineDataSet addValues(String label, int[] data) {
+    private LineDataSet addValues(String label, ArrayList<Float> data) {
         List<Entry> entries = new ArrayList<>();
-        for(int i = 0; i < data.length; i++) {
-            entries.add(new Entry((float)i, data[i]));
+        for(int i = 0; i < data.size(); i++) {
+            entries.add(new Entry((float)i, data.get(i)));
         }
 
-        // entries.add(new Entry(new Long(day.getTime()).floatValue(), 10));
         LineDataSet dataSet = new LineDataSet(entries, label); //later enable legend, set color
         return dataSet;
 
