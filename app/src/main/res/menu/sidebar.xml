@@ -13,5 +13,8 @@
                 android:id="@+id/sidebar_about"
                 android:icon="@drawable/ic_info_outline_black"
                 android:title="About"/>
+        <item
+                android:id="@+id/sidebar_signout"
+                android:title="Sign Out"/>
     </group>
 </menu>
