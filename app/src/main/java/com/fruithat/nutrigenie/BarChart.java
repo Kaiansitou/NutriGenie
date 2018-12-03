@@ -54,7 +54,7 @@ public class BarChart {
         if (preferences.getBoolean("trans_fat", false)) names.add("Trans Fat");
         if (preferences.getBoolean("saturated_fat", false)) names.add("Saturated Fat");
         if (preferences.getBoolean("total_fat", false)) names.add("Total Fat");
-        allNutritionNames = (String[]) names.toArray();
+        allNutritionNames = names.stream().toArray(String[]::new);
 
         addInitialEntries(allNutritionNames);
         setUpBarGraphDisplay();
