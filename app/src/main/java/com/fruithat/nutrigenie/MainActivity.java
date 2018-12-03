@@ -9,12 +9,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
+import android.support.v14.preference.PreferenceFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -219,7 +221,6 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
                         case R.id.sidebar_history:
                             actionbar.setTitle("History");
                             mFragmentTransaction.replace(R.id.fragment_container, mHistoryFragment);
-
                             break;
                         case R.id.sidebar_about:
                             actionbar.setTitle("About");
@@ -276,6 +277,7 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
                     RC_SIGN_IN);
         } else {
             mPreferences = SharedFirebasePreferences.getDefaultInstance(this);
+            PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
             mPreferences.keepSynced(true);
             mPreferences.pull().addOnPullCompleteListener(new SharedFirebasePreferences.OnPullCompleteListener() {
                 @Override
