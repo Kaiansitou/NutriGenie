@@ -102,16 +102,14 @@ public class ScanFragment extends Fragment {
     private void startStatisticsActivity() {
         // Yan-Jen: change MainActivity to wherever you need the scanned data
         // maybe a new Statistics Activity or fragment?
-        if (getActivity() != null) {
-            Intent intent = new Intent(getActivity(), MainActivity.class);
-            //Intent intent = new Intent(this.getContext(), MainActivity.class);
-            NutritionInformation nutriInfo = nutriInfoBuilder.build();
-            for (String key : nutritionItems.keySet()) {
-                Log.i(TAG, key + " => " + nutritionItems.get(key));
-            }
-            intent.putExtra("info", nutriInfo);
-            startActivity(intent);
+        Intent intent = new Intent(getActivity(), MainActivity.class);
+        //Intent intent = new Intent(this.getContext(), MainActivity.class);
+        NutritionInformation nutriInfo = nutriInfoBuilder.build();
+        for (String key : nutritionItems.keySet()) {
+            Log.i(TAG, key + " => " + nutritionItems.get(key));
         }
+        intent.putExtra("info", nutriInfo);
+        startActivity(intent);
 
     }
 
