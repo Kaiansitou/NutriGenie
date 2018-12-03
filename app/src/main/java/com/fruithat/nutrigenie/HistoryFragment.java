@@ -42,7 +42,6 @@ public class HistoryFragment extends Fragment {
         setRetainInstance(true);
         historyChart = (LineChart) view.findViewById(R.id.chart);
         startDate = view.findViewById(R.id.start);
-
         endDate = view.findViewById(R.id.end);
         myCalendar = Calendar.getInstance();
         myCalendar2 = Calendar.getInstance();
@@ -260,9 +259,10 @@ public class HistoryFragment extends Fragment {
          l.setYOffset(10f);
          l.setXEntrySpace(7f);
          l.setFormLineWidth(2f);
+
          l.setForm(Legend.LegendForm.CIRCLE);
          l.setYEntrySpace(5f);
-         l.setTextSize(20f);
+         l.setTextSize(10f);
          l.setStackSpace(5f);
         historyChart.animateX(3000);
 
