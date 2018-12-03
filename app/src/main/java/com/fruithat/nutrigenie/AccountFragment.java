@@ -117,6 +117,12 @@ public class AccountFragment extends Fragment {
                 } else if((weightText.getText().toString().equals("") && heightText.getText().toString().equals("") &&
                         ageText.getText().toString().equals(""))){
                     Toast.makeText(getContext(), "Please enter your information", Toast.LENGTH_LONG).show();
+                }else if((weightText.getText().toString().equals("") && heightText.getText().toString().equals(""))){
+                    Toast.makeText(getContext(), "Please enter your information", Toast.LENGTH_LONG).show();
+                }else if((weightText.getText().toString().equals("")  && ageText.getText().toString().equals(""))){
+                    Toast.makeText(getContext(), "Please enter your information", Toast.LENGTH_LONG).show();
+                }else if(heightText.getText().toString().equals("") && ageText.getText().toString().equals("")){
+                    Toast.makeText(getContext(), "Please enter your information", Toast.LENGTH_LONG).show();
                 }
         });
 
