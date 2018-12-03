@@ -219,7 +219,6 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
                         case R.id.sidebar_history:
                             actionbar.setTitle("History");
                             mFragmentTransaction.replace(R.id.fragment_container, mHistoryFragment);
-
                             break;
                         case R.id.sidebar_about:
                             actionbar.setTitle("About");
