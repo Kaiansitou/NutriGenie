@@ -80,7 +80,7 @@ public class HomeFragment extends Fragment {
         }
 
 
-        BarChart stackedBarChart = new BarChart(view.findViewById(R.id.home_bar_chart));
+        BarChart stackedBarChart = new BarChart(view.findViewById(R.id.home_bar_chart), getActivity());
         stackedBarChart.changePreferences(new String[]{"Trans Fat",
                 "Saturated Fat",
                 "Total Fat"});
