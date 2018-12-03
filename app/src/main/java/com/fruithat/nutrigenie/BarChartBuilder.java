@@ -1,6 +1,7 @@
 package com.fruithat.nutrigenie;
 
 
+import android.util.Log;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
 import android.view.View;
 import com.github.mikephil.charting.components.AxisBase;
@@ -9,18 +10,19 @@ import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 
 import java.util.ArrayList;
 
-public class BarChart {
-    private HorizontalBarChart chart;
+public class BarChartBuilder {
+    //private HorizontalBarChart chart;
     private ArrayList<BarEntry> entries;
     private ArrayList<String> labels;
     private String[] allNutritionNames;
 
-    public BarChart(View view) {
-        chart =  new HorizontalBarChart(this.getContext()) ;
+    public BarChartBuilder(HorizontalBarChart chart) {
+        //chart = (HorizontalBarChart) chartView;
         entries = new ArrayList<>();
         labels = new ArrayList<>();
 
@@ -53,31 +55,50 @@ public class BarChart {
         };
 
         addInitialEntries(allNutritionNames);
-        setUpBarGraphDisplay();
-        setUpAxes();
-        setUpLegend();
-    }
-
-    public HorizontalBarChart getChart() {
-        return chart;
+        setUpBarGraphDisplay(chart);
+        setUpAxes(chart);
+        setUpLegend(chart);
     }
 
     public ArrayList<BarEntry> getEntries() {
         return entries;
     }
+    public void changeEntry(String[] preferences, String nutritionName, float value) {
+        for (int i = 0; i < preferences.length; i++) {
+            if (preferences[i] == nutritionName) {
+                BarEntry dataEntry = entries.get(i);
+                float x = dataEntry.getX();
+                float[] y = dataEntry.getYVals();
+                float y0 = y[0] + value;
+                float y1 = y[1] - value;
+                float y2 = y[2];
+                if (y0 > 100) {
+                    y2 = y0;
+                    y0 = 0f;
+                    y1 = 0f;
+                } else if (y[0] == 0 && y[1] == 0) {
+                    y2 += value;
+                    y0 = 0;
+                    y1 = 0;
+                }
+                entries.remove(i);
+                entries.add(i,new BarEntry(x, new float[]{y0, y1, y2}));
 
-    public void changeEntry() {
-
+                //Log.i("entries", String.valueOf(y0) + "/" + String.valueOf(y1) + "/" + String.valueOf(y2));
+                break;
+            }
+        }
     }
 
     private void addInitialEntries(String[] allNutritionNames) {
 
-        if (entries.size() == 0) {
-            for (int i = 0; i < allNutritionNames.length; i++) {
-                entries.add(new BarEntry((float)i,new float[]{0f,100f,0f}));
-                labels.add(allNutritionNames[i]);
-            }
+        for (int i = 0; i < allNutritionNames.length; i++) {
+            entries.add(new BarEntry((float)i,new float[]{0f,100f,0f}));
+            labels.add(allNutritionNames[i]);
         }
+        Log.i("data_bar", "names: "+String.valueOf(allNutritionNames.length));
+        Log.i("data_bar", "labels: "+String.valueOf(labels.size()));
+        Log.i("data_bar", "entries: "+String.valueOf(entries.size()));
     }
 
     public void changePreferences(String[] preferences) {
@@ -90,7 +111,7 @@ public class BarChart {
         addInitialEntries(preferences);
     }
 
-    private void setUpBarGraphDisplay() {
+    private void setUpBarGraphDisplay(HorizontalBarChart chart) {
         chart.setDrawBarShadow(false); // remove bar shadow
         chart.getDescription().setEnabled(false); // remove description
         chart.setScaleEnabled(false);
@@ -100,11 +121,12 @@ public class BarChart {
 
         // Add Spacing Top & Bottom
         chart.setExtraTopOffset(10f);
-        chart.setExtraBottomOffset(10f);
-        chart.setExtraLeftOffset(33f);
+        chart.setExtraBottomOffset(-1800f);
+        chart.setExtraLeftOffset(20f);
+        chart.setExtraLeftOffset(5f);
     }
 
-    private void setUpAxes() {
+    private void setUpAxes(HorizontalBarChart chart) {
 
         // Left X-axis
         XAxis xl = chart.getXAxis();
@@ -139,15 +161,16 @@ public class BarChart {
         yr.setTextSize(15f);
     }
 
-    private void setUpLegend() {
+    private void setUpLegend(HorizontalBarChart chart) {
         Legend l = chart.getLegend();
-        l.setEnabled(true);
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+        l.setEnabled(false);
+        /*l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
         l.setDrawInside(false);
         l.setFormSize(15f);
         l.setTextSize(15f);
         l.setXEntrySpace(20f);
         l.setWordWrapEnabled(true);
+        l.setYOffset(-100f);*/
     }
 }
