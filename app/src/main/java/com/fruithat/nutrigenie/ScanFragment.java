@@ -1,5 +1,6 @@
 package com.fruithat.nutrigenie;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,6 +12,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,6 +53,7 @@ public class ScanFragment extends Fragment {
     private ImageView imageView;
     private String mCurrentPhotoPath;
     static final int REQUEST_TAKE_PHOTO = 1;
+    private FragmentActivity activity;
 
     private static final String TAG = "NutriGenie";
 
@@ -97,18 +100,24 @@ public class ScanFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activity = getActivity();
+    }
+
     private void startStatisticsActivity() {
         // Yan-Jen: change MainActivity to wherever you need the scanned data
         // maybe a new Statistics Activity or fragment?
-        if (getActivity() != null) {
+        if (activity != null) {
             Log.i(TAG, "GET ACTIVITY IS NOT NULL");
-            Intent intent = new Intent(getActivity(), MainActivity.class);
+            Intent intent = new Intent(activity, MainActivity.class);
             NutritionInformation nutriInfo = nutriInfoBuilder.build();
             for (String key : nutritionItems.keySet()) {
                 Log.i(TAG, key + " => " + nutritionItems.get(key));
             }
             intent.putExtra("info", nutriInfo);
-            startActivity(intent);
+            activity.startActivity(intent);
         } else {
             Log.i(TAG, "GET ACTIVITY IS NULL, OH NO");
         }
@@ -183,58 +192,92 @@ public class ScanFragment extends Fragment {
                             for (FirebaseVisionText.Line line: block.getLines()) {
                                 String lineText = line.getText();
                                 if (lineText.contains("Protein")) {
+                                    Log.i(TAG, lineText);
                                     Float grams = parseOneWord(lineText);
                                     nutritionItems.put("Protein", grams);
                                     if (grams >= 0 ) nutriInfoBuilder.protein(grams);
                                 } else if (lineText.contains("Total Fat")) {
+                                    Log.i(TAG, lineText);
                                     Float grams = parseTwoWords(lineText);
                                     nutritionItems.put("Total Fat", grams);
                                     if (grams >= 0 ) nutriInfoBuilder.totalFat(grams);
                                 } else if (lineText.contains("Sodium")) {
+                                    Log.i(TAG, lineText);
                                     Float grams = parseOneWord(lineText);
                                     nutritionItems.put("Sodium", grams);
                                     if (grams >= 0 ) nutriInfoBuilder.sodium(grams);
                                 } else if (lineText.contains("Cholesterol")) {
+                                    Log.i(TAG, lineText);
                                     Float grams = parseOneWord(lineText);
                                     nutritionItems.put("Cholesterol", grams);
                                     if (grams >= 0 ) nutriInfoBuilder.cholesterol(grams);
                                 } else if (lineText.contains("Saturated Fat")) {
+                                    Log.i(TAG, lineText);
                                     Float grams = parseTwoWords(lineText);
                                     nutritionItems.put("Saturated Fat", grams);
                                     if (grams >= 0 ) nutriInfoBuilder.saturatedFat(grams);
                                  } else if (lineText.contains("Trans Fat")) {
+                                    Log.i(TAG, lineText);
                                     Float grams = parseTwoWords(lineText);
                                     nutritionItems.put("Trans Fat", grams);
                                     if (grams >= 0 ) nutriInfoBuilder.transFat(grams);
                                 } else if (lineText.contains("Dietary Fiber")) {
+                                    Log.i(TAG, lineText);
                                     Float grams = parseTwoWords(lineText);
                                     nutritionItems.put("Dietary Fiber", grams);
                                     if (grams >= 0 ) nutriInfoBuilder.fiber(grams);
                                 } else if (lineText.contains("Total Sugars")) {
+                                    Log.i(TAG, lineText);
                                     Float grams = parseTwoWords(lineText);
                                     nutritionItems.put("Total Sugars", grams);
                                     if (grams >= 0 ) nutriInfoBuilder.sugar(grams);
+                                } else if (lineText.contains("Sugars")) {
+                                    Log.i(TAG, lineText);
+                                    Float grams = parseOneWord(lineText);
+                                    nutritionItems.put("Sugars", grams);
+                                    if (grams >= 0 ) nutriInfoBuilder.sugar(grams);
                                 } else if (lineText.contains("Vitamin D")) {
+                                    Log.i(TAG, lineText);
                                     Float grams = parseTwoWords(lineText);
                                     nutritionItems.put("Vitamin D", grams);
                                     if (grams >= 0 ) nutriInfoBuilder.vitaminD(grams);
                                 } else if (lineText.contains("Vitamin C")) {
+                                    Log.i(TAG, lineText);
                                     Float grams = parseTwoWords(lineText);
                                     nutritionItems.put("Vitamin C", grams);
                                     if (grams >= 0 ) nutriInfoBuilder.vitaminC(grams);
                                 } else if (lineText.contains("Calcium")) {
+                                    Log.i(TAG, lineText);
                                     Float grams = parseOneWord(lineText);
                                     nutritionItems.put("Calcium", grams);
                                     if (grams >= 0 ) nutriInfoBuilder.calcium(grams);
                                 } else if (lineText.contains("Iron")) {
+                                    Log.i(TAG, lineText);
                                     Float grams = parseOneWord(lineText);
                                     nutritionItems.put("Iron", grams);
                                     if (grams >= 0 ) nutriInfoBuilder.iron(grams);
                                 } else if (lineText.contains("Potassium")) {
+                                    Log.i(TAG, lineText);
                                     Float grams = parseOneWord(lineText);
                                     nutritionItems.put("Potassium", grams);
                                     if (grams >= 0 ) nutriInfoBuilder.potassium(grams);
+                                } else if (lineText.contains("Total Carbohydrate")) {
+                                    Log.i(TAG, lineText);
+                                    Float grams = parseTwoWords(lineText);
+                                    nutritionItems.put("Total Carbohydrate", grams);
+                                    if (grams >= 0 ) nutriInfoBuilder.carbohydrates(grams);
+                                } else if (lineText.contains("Carbohydrate")) {
+                                    Log.i(TAG, lineText);
+                                    Float grams = parseOneWord(lineText);
+                                    nutritionItems.put("Carbohydrate", grams);
+                                    if (grams >= 0 ) nutriInfoBuilder.carbohydrates(grams);
+                                } else if (lineText.contains("Calories")) {
+                                    Log.i(TAG, lineText);
+                                    Float grams = parseOneWord(lineText);
+                                    nutritionItems.put("Calories", grams);
+                                    if (grams >= 0 ) nutriInfoBuilder.calories(grams);
                                 } else if (lineText.contains("Serving size")) {
+                                    Log.i(TAG, lineText);
                                     Pattern pattern = Pattern.compile("Serving size (\\d) (\\w+).*");
                                     Matcher matcher = pattern.matcher(lineText);
                                     while (matcher.find()) {
@@ -282,14 +325,33 @@ public class ScanFragment extends Fragment {
     private float parseGrams(String gramsString) {
         int idxM = gramsString.indexOf("m");
         int idxG = gramsString.indexOf("g");
+        int idxP = gramsString.indexOf("%");
         float result = -1;
         gramsString = gramsString.replaceAll("(o|O)+", "0");
         if (idxM >= 0) {
             String num = gramsString.substring(0, idxM);
-            result = Float.parseFloat(num);
+            try {
+                result = Float.parseFloat(num);
+            } catch (NumberFormatException e) {
+                Log.e(TAG, e.getMessage());
+                result = -1;
+            }
         } else if (idxG >= 0) {
             String num = gramsString.substring(0, idxG);
-            result = Float.parseFloat(num);
+            try {
+                result = Float.parseFloat(num);
+            } catch (NumberFormatException e) {
+                Log.e(TAG, e.getMessage());
+                result = -1;
+            }
+        } else if (idxP >= 0) {
+            String num = gramsString.substring(0, idxP);
+            try {
+                result = Float.parseFloat(num);
+            } catch (NumberFormatException e) {
+                Log.e(TAG, e.getMessage());
+                result = -1;
+            }
         }
         return result;
     }
