@@ -10,7 +10,7 @@
         <EditText
                 android:id="@+id/start"
                 android:clickable="true"
-                android:layout_width="match_parent"
+                android:layout_width="143dp"
                 android:layout_height="wrap_content"
                 android:hint="11/14/2018"/>
 
@@ -24,7 +24,7 @@
         <RelativeLayout
                 android:id="@+id/container"
                 android:layout_width="match_parent"
-                android:layout_height="521dp"
+                android:layout_height="match_parent"
                 tools:context="com.fruithat.nutrigenie.MainActivity">
 
 
