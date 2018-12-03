@@ -139,7 +139,12 @@ public class HistoryFragment extends Fragment {
     }
 
     private void drawChart() throws ParseException {
-        getData();
+       // String date = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()).format(new Date());
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:m:ss");
+        String date = sdf.format(new Date());
+        Date startTime = sdf.parse(date + " 00:00:00");
+        Date endTime = sdf.parse(date + " 23:59:59");
+
         //Default past 7 Days
         Date dayStart = new Date();
         sdf.format(dayStart);
@@ -169,26 +174,84 @@ public class HistoryFragment extends Fragment {
         ArrayList<Float> sugar = new ArrayList<>();
         ArrayList<Float> totalfat = new ArrayList<>();
 
-            NutritionHistory.getInstance().getNutritionInformation(dayStart, dayEnd, new NutritionHistoryCallback() {
+        NutritionHistory instance = NutritionHistory.getInstance();
+        NutritionInformation.NutritionInformationBuilder nb = new NutritionInformation.NutritionInformationBuilder()
+                .calcium(1.0)
+                .carbohydrates(8.0)
+                .fiber(17.0)
+                .vitaminA(1.0)
+                .vitaminC(14.0)
+                .iron(1.0)
+                .calcium(1.0)
+                .servingSize(1.0)
+                .servingsPerContainer(1.0)
+                .servingType("Cup");
+        NutritionInformation n = nb.build();
+        instance.addNutritionInformation("Apple",n);
+
+        instance.getNutritionInformation(startTime, endTime, new NutritionHistoryCallback() {
                 @Override
                 public void onDataReceived(HashMap<Long, NutritionInformation> nutritionInformation) {
                     Log.i("Here", "RECEVIED DATA");
+                   // Log.i("Here", nutritionInformation.keySet().toString());
+                   // Log.i("Here", "Value: " + String.valueOf(nutritionInformation.get(0).getCalcium()));
+
                     for(Long day: nutritionInformation.keySet()) {
+                     //   Log.i("Here", day.toString());
+                        Log.i("Here", String.valueOf(nutritionInformation.get(day).getCalories()));
+                        Log.i("Here", String.valueOf(nutritionInformation.get(day).getCalcium()));
                         xAxis.add(sdf.format(new Date(day)).toString());
-                        calories.add((float) nutritionInformation.get(day).getCalories());
+                        Log.i("Here", sdf.format(new Date(day)).toString());
+//                        calories.add((float) nutritionInformation.get(day).getCalories());
                         calcium.add((float)nutritionInformation.get(day).getCalcium());
-                        sodium.add((float)nutritionInformation.get(day).getSodium());
+                       /* sodium.add((float)nutritionInformation.get(day).getSodium());
                         carbs.add((float)nutritionInformation.get(day).getCarbohydrates());
                         cholestrol.add((float)nutritionInformation.get(day).getCholesterol());
                         iron.add((float)nutritionInformation.get(day).getIron());
                         protien.add((float)nutritionInformation.get(day).getProtein());
                         sugar.add((float)nutritionInformation.get(day).getSugar());
-                        totalfat.add((float)nutritionInformation.get(day).getTotalFat());
+                        totalfat.add((float)nutritionInformation.get(day).getTotalFat());*/
                     }
 
                 }
             });
 
+        setAllData(calories, calcium, sodium, carbs, iron, sugar, protien, totalfat, cholestrol);
+        designChart(xAxis);
+        historyChart.invalidate();
+    }
+    private void getData() throws ParseException {
+
+        NutritionHistory instance = NutritionHistory.getInstance();
+        NutritionInformation.NutritionInformationBuilder nb = new NutritionInformation.NutritionInformationBuilder()
+         .calories(1.0)
+                .calcium(5.2)
+          .sodium(2.9)
+                .carbohydrates(2.9)
+        .cholesterol(20)
+          .iron(3.9)
+          .protein(4.9)
+         .sugar(9.5)
+         .totalFat(9.4);
+        NutritionInformation n = nb.build();
+
+        NutritionInformation.NutritionInformationBuilder nb2 = new NutritionInformation.NutritionInformationBuilder()
+                .calories(5.0)
+                .calcium(5.2)
+                .sodium(9.9)
+                .carbohydrates(6.9)
+                .cholesterol(5)
+                .iron(7.9)
+                .protein(9.9)
+                .sugar(2.5)
+                .totalFat(6.4);
+        NutritionInformation n2 = nb.build();
+        instance.addNutritionInformation("Apple",n);
+        instance.addNutritionInformation("Orange",n2);
+    }
+
+    public void setAllData(ArrayList<Float> calories, ArrayList<Float> calcium, ArrayList<Float>sodium, ArrayList<Float> carbs,
+                           ArrayList<Float> iron, ArrayList<Float> sugar, ArrayList<Float> protien, ArrayList<Float>totalfat, ArrayList<Float> cholestrol) {
         LineDataSet dataCalories = addValues("Calories", calories);
         dataCalories.setColor(Color.RED);
         dataCalories.setLineWidth(2f);
@@ -227,9 +290,10 @@ public class HistoryFragment extends Fragment {
 
         LineData lineData = new LineData(dataCalories, dataCalcium ,dataSodium, dataCarbs, dataIron, dataSugar, dataProtein, dataTotalFat, dataCholesterol);
         historyChart.setData(lineData);
-
+    }
+    public void designChart(ArrayList<String> xAxis) {
         historyChart.getXAxis().setDrawAxisLine(true);
-      //  historyChart.setVisibleXRange(0, xAxis.size());
+        //  historyChart.setVisibleXRange(0, xAxis.size());
         historyChart.getXAxis().setValueFormatter(new MyXAxisValueFormatter(xAxis));
         historyChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
         historyChart.enableScroll();
@@ -251,40 +315,16 @@ public class HistoryFragment extends Fragment {
         l.setYEntrySpace(5f);
         l.setTextSize(10f);
         l.setStackSpace(5f);
+        historyChart.getAxisLeft().setEnabled(true); //show y-axis at left
+        historyChart.getAxisRight().setEnabled(false); //hide y-axis at right
+        historyChart.getAxisLeft().setValueFormatter(new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                return (float) value + "g"; // yVal is a string array
+            }
+        });
 
         historyChart.animateX(3000);
-        historyChart.invalidate();
-    }
-    private void getData() throws ParseException {
-        String date = new SimpleDateFormat("MM/dd/yy", Locale.getDefault()).format(new Date());
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
-        Date startTime = sdf.parse(date + " 00:00:00");
-        Date endTime = sdf.parse(date + " 23:59:59");
-
-        NutritionHistory instance = NutritionHistory.getInstance();
-        NutritionInformation.NutritionInformationBuilder nb = new NutritionInformation.NutritionInformationBuilder()
-         .calories(1.0)
-                .calcium(5.2)
-          .sodium(2.9)
-                .carbohydrates(2.9)
-        .cholesterol(20)
-        .iron(3.9)
-        .protein(4.9)
-         .sugar(9.5)
-      .totalFat(9.4);
-        NutritionInformation n = nb.build();
-
-        NutritionInformation.NutritionInformationBuilder nb2 = new NutritionInformation.NutritionInformationBuilder()
-                .calories(5.0)
-                .calcium(5.2)
-                .sodium(9.9)
-                .carbohydrates(6.9)
-                .cholesterol(5)
-                .iron(7.9)
-                .protein(9.9)
-                .sugar(2.5)
-                .totalFat(6.4);
-        NutritionInformation n2 = nb.build();
     }
 
     private LineDataSet addValues(String label, ArrayList<Float> data) {
