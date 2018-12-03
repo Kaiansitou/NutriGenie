@@ -79,11 +79,11 @@ public class HomeFragment extends Fragment {
             e.printStackTrace();
         }
 
-
         BarChart stackedBarChart = new BarChart(view.findViewById(R.id.home_bar_chart), getActivity());
-        stackedBarChart.changePreferences(new String[]{"Trans Fat",
-                "Saturated Fat",
-                "Total Fat"});
+        //stackedBarChart.changePreferences(new String[]{"Trans Fat",
+        //        "Saturated Fat",
+        //        "Total Fat"});
+        //stackedBarChart.increaseNutritionEntryValue();
         HorizontalBarChart chart = stackedBarChart.getChart();
         ArrayList<BarEntry> entries = stackedBarChart.getEntries();
         BarDataSet barDataSet = new BarDataSet(entries, "");
