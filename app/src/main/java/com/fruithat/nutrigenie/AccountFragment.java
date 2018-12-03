@@ -104,11 +104,13 @@ public class AccountFragment extends Fragment {
                         !ageText.getText().toString().equals("")) {
                     if (female.isChecked()) {
                         double women_BMR = 10 * (weight * 0.45359237) + 6.25 * height - 5 * age - 161;
+                        women_BMR = women_BMR * 1.2;
 
                         result.setText(String.valueOf((int) women_BMR));
 
                     } else if (male.isChecked()) {
                         double men_BMR = 10 * (weight * 0.45359237) + 6.25 * height - 5 * age + 5;
+                        men_BMR = men_BMR * 1.2;
 
                         result.setText(String.valueOf((int) men_BMR));
                     }
