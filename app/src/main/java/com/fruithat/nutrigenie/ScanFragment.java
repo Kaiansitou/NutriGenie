@@ -344,23 +344,23 @@ public class ScanFragment extends Fragment {
                                 } else if (lineText.contains("Calories from Fat")) {
                                     Log.i(TAG, lineText);
                                     String[] parsedNutritionItem = lineText.split(" ");
-                                    Float grams = (float)-1;
+                                    Float calories = (float)-1;
                                     if (parsedNutritionItem.length >= 4) {
-                                       grams = Float.parseFloat(parsedNutritionItem[3]);
+                                       calories = Float.parseFloat(parsedNutritionItem[3]);
                                     }
-                                    nutritionItems.put("Total Carbohydrate", grams);
-                                    if (grams >= 0 ) nutriInfoBuilder.caloriesFromFat(grams);
+                                    nutritionItems.put("Calories from fat", calories);
+                                    if (calories >= 0 ) nutriInfoBuilder.caloriesFromFat(calories);
                                 } else if (lineText.contains("Servings Per Container")) {
                                     Log.i(TAG, lineText);
                                     String[] parsedNutritionItem = lineText.split(" ");
-                                    Float grams = (float)-1;
+                                    Float servings = (float)-1;
                                     if (parsedNutritionItem.length >= 5) {
-                                        grams = Float.parseFloat(parsedNutritionItem[4]);
+                                        servings = Float.parseFloat(parsedNutritionItem[4]);
                                     } else if (parsedNutritionItem.length >= 4) {
-                                        grams = Float.parseFloat(parsedNutritionItem[3]);
+                                        servings = Float.parseFloat(parsedNutritionItem[3]);
                                     }
-                                    nutritionItems.put("Servings Per Container", grams);
-                                    if (grams >= 0 ) nutriInfoBuilder.servingsPerContainer(grams);
+                                    nutritionItems.put("Servings Per Container", servings);
+                                    if (servings >= 0 ) nutriInfoBuilder.servingsPerContainer(servings);
                                 } else if (lineText.contains("Carbohydrate")) {
                                     Log.i(TAG, lineText);
                                     Float grams = parseOneWord(lineText);
@@ -368,9 +368,9 @@ public class ScanFragment extends Fragment {
                                     if (grams >= 0 ) nutriInfoBuilder.carbohydrates(grams);
                                 } else if (lineText.contains("Calories")) {
                                     Log.i(TAG, lineText);
-                                    Float grams = parseOneWord(lineText);
-                                    nutritionItems.put("Calories", grams);
-                                    if (grams >= 0 ) nutriInfoBuilder.calories(grams);
+                                    Float amount = parseOneWord(lineText);
+                                    nutritionItems.put("Calories", amount);
+                                    if (amount >= 0 ) nutriInfoBuilder.calories(amount);
                                 } else if (lineText.contains("Serving size")) {
                                     Log.i(TAG, lineText);
                                     Pattern pattern = Pattern.compile("Serving size (\\d) (\\w+).*");
