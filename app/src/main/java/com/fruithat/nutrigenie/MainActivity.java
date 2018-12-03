@@ -71,6 +71,11 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
     private AboutFragment mAboutFragment = new AboutFragment();
     private LoadingFragment mLoadingFragment = new LoadingFragment();
 
+    /*
+     * Profile Image
+     */
+    private Bitmap profilePic = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,30 +134,15 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
         mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(@NonNull View view, float v) {
-
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                CircleImageView circleImageView = findViewById(R.id.img_profile);
+                if (profilePic != null) circleImageView.setImageBitmap(profilePic);
+                TextView email = findViewById(R.id.email);
+                email.setText(currentUser.getEmail());
             }
 
             @Override
             public void onDrawerOpened(@NonNull View view) {
-                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                CircleImageView circleImageView = findViewById(R.id.img_profile);
-                new Thread(() -> {
-                    try {
-                        java.net.URL url = new java.net.URL(currentUser.getPhotoUrl().toString());
-                        HttpURLConnection connection = (HttpURLConnection) url
-                                .openConnection();
-                        connection.setDoInput(true);
-                        connection.connect();
-                        InputStream input = connection.getInputStream();
-                        Bitmap myBitmap = BitmapFactory.decodeStream(input);
-                        circleImageView.post(() -> circleImageView.setImageBitmap(myBitmap));
-                    } catch (Exception e) {
-                        Log.i("NutriGenie", "Could not get a photo");
-                    }
-                }).start();
-
-                TextView email = findViewById(R.id.email);
-                email.setText(currentUser.getEmail());
             }
 
             @Override
@@ -297,6 +287,20 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
                     Toast.makeText(getApplicationContext(), "Fetch failed", Toast.LENGTH_SHORT).show();
                 }
             });
+            new Thread(() -> {
+                try {
+                    java.net.URL url = new java.net.URL(currentUser.getPhotoUrl().toString());
+                    HttpURLConnection connection = (HttpURLConnection) url
+                            .openConnection();
+                    connection.setDoInput(true);
+                    connection.connect();
+                    InputStream input = connection.getInputStream();
+                    profilePic = BitmapFactory.decodeStream(input);
+                } catch (Exception e) {
+                    Log.i("NutriGenie", "Could not get a photo");
+                }
+            }).start();
+
         }
     }
 }
