@@ -263,6 +263,8 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
                     AuthUI.getInstance()
                             .createSignInIntentBuilder()
                             .setAvailableProviders(providers)
+                            .setLogo(R.drawable.logo)
+                            .setTheme(R.style.AppTheme)
                             .build(),
                     RC_SIGN_IN);
         } else {
