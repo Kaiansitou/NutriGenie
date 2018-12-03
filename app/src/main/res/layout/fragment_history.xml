@@ -15,22 +15,24 @@
                 <EditText
                         android:id="@+id/start"
                         android:clickable="true"
-                        android:textSize="10dp"
+                        android:textSize="16dp"
+                        android:inputType = "none"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:hint="From: 12/01/2018"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentTop="true"/>
+                        android:layout_alignParentTop="true" android:layout_alignParentStart="true"
+                        android:layout_marginStart="48dp"/>
                 <EditText
                         android:id="@+id/end"
                         android:clickable="true"
-                        android:layout_width="192dp"
+                        android:inputType = "none"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:hint="To: 12/31/2018"
-                        android:textSize="10dp"
+                        android:textSize="16dp"
                         android:layout_alignParentTop="true"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="2dp"/>
+                        android:layout_marginEnd="72dp"/>
 
         </RelativeLayout>
 
