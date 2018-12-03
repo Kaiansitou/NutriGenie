@@ -246,11 +246,36 @@ public class ScanFragment extends Fragment {
                                     Float grams = parseTwoWords(lineText);
                                     nutritionItems.put("Vitamin C", grams);
                                     if (grams >= 0 ) nutriInfoBuilder.vitaminC(grams);
+                                } else if (lineText.contains("Vitamin B6")) {
+                                    Log.i(TAG, lineText);
+                                    Float grams = parseTwoWords(lineText);
+                                    nutritionItems.put("Vitamin B6", grams);
+                                    if (grams >= 0 ) nutriInfoBuilder.vitaminB6(grams);
+                                } else if (lineText.contains("Vitamin B12")) {
+                                    Log.i(TAG, lineText);
+                                    Float grams = parseTwoWords(lineText);
+                                    nutritionItems.put("Vitamin B12", grams);
+                                    if (grams >= 0 ) nutriInfoBuilder.vitaminB12(grams);
+                                } else if (lineText.contains("Vitamin E")) {
+                                    Log.i(TAG, lineText);
+                                    Float grams = parseTwoWords(lineText);
+                                    nutritionItems.put("Vitamin E", grams);
+                                    if (grams >= 0 ) nutriInfoBuilder.vitaminE(grams);
+                                } else if (lineText.contains("Vitamin K")) {
+                                    Log.i(TAG, lineText);
+                                    Float grams = parseTwoWords(lineText);
+                                    nutritionItems.put("Vitamin K", grams);
+                                    if (grams >= 0 ) nutriInfoBuilder.vitaminK(grams);
                                 } else if (lineText.contains("Calcium")) {
                                     Log.i(TAG, lineText);
                                     Float grams = parseOneWord(lineText);
                                     nutritionItems.put("Calcium", grams);
                                     if (grams >= 0 ) nutriInfoBuilder.calcium(grams);
+                                } else if (lineText.contains("Fiber")) {
+                                    Log.i(TAG, lineText);
+                                    Float grams = parseOneWord(lineText);
+                                    nutritionItems.put("Fiber", grams);
+                                    if (grams >= 0 ) nutriInfoBuilder.fiber(grams);
                                 } else if (lineText.contains("Iron")) {
                                     Log.i(TAG, lineText);
                                     Float grams = parseOneWord(lineText);
@@ -261,11 +286,81 @@ public class ScanFragment extends Fragment {
                                     Float grams = parseOneWord(lineText);
                                     nutritionItems.put("Potassium", grams);
                                     if (grams >= 0 ) nutriInfoBuilder.potassium(grams);
+                                } else if (lineText.contains("Thiamin")) {
+                                    Log.i(TAG, lineText);
+                                    Float grams = parseOneWord(lineText);
+                                    nutritionItems.put("Thiamin", grams);
+                                    if (grams >= 0 ) nutriInfoBuilder.thiamin(grams);
+                                } else if (lineText.contains("Riboflavin")) {
+                                    Log.i(TAG, lineText);
+                                    Float grams = parseOneWord(lineText);
+                                    nutritionItems.put("Riboflavin", grams);
+                                    if (grams >= 0 ) nutriInfoBuilder.riboflavin(grams);
+                                } else if (lineText.contains("Niacin")) {
+                                    Log.i(TAG, lineText);
+                                    Float grams = parseOneWord(lineText);
+                                    nutritionItems.put("Niacin", grams);
+                                    if (grams >= 0 ) nutriInfoBuilder.niacin(grams);
+                                } else if (lineText.contains("Biotin")) {
+                                    Log.i(TAG, lineText);
+                                    Float grams = parseOneWord(lineText);
+                                    nutritionItems.put("Biotin", grams);
+                                    if (grams >= 0 ) nutriInfoBuilder.biotin(grams);
+                                } else if (lineText.contains("Folate")) {
+                                    Log.i(TAG, lineText);
+                                    Float grams = parseOneWord(lineText);
+                                    nutritionItems.put("Folate", grams);
+                                    if (grams >= 0 ) nutriInfoBuilder.folate(grams);
+                                } else if (lineText.contains("Chloride")) {
+                                    Log.i(TAG, lineText);
+                                    Float grams = parseOneWord(lineText);
+                                    nutritionItems.put("Chloride", grams);
+                                    if (grams >= 0 ) nutriInfoBuilder.chloride(grams);
+                                } else if (lineText.contains("Chromium")) {
+                                    Log.i(TAG, lineText);
+                                    Float grams = parseOneWord(lineText);
+                                    nutritionItems.put("Chromium", grams);
+                                    if (grams >= 0 ) nutriInfoBuilder.chromium(grams);
+                                } else if (lineText.contains("Copper")) {
+                                    Log.i(TAG, lineText);
+                                    Float grams = parseOneWord(lineText);
+                                    nutritionItems.put("Copper", grams);
+                                    if (grams >= 0 ) nutriInfoBuilder.copper(grams);
+                                } else if (lineText.contains("Iodine")) {
+                                    Log.i(TAG, lineText);
+                                    Float grams = parseOneWord(lineText);
+                                    nutritionItems.put("Iodine", grams);
+                                    if (grams >= 0 ) nutriInfoBuilder.iodine(grams);
+                                } else if (lineText.contains("Pantothenic Acid")) {
+                                    Log.i(TAG, lineText);
+                                    Float grams = parseTwoWords(lineText);
+                                    nutritionItems.put("Pantothenic Acid", grams);
+                                    if (grams >= 0 ) nutriInfoBuilder.pantothenicAcid(grams);
                                 } else if (lineText.contains("Total Carbohydrate")) {
                                     Log.i(TAG, lineText);
                                     Float grams = parseTwoWords(lineText);
                                     nutritionItems.put("Total Carbohydrate", grams);
                                     if (grams >= 0 ) nutriInfoBuilder.carbohydrates(grams);
+                                } else if (lineText.contains("Calories from Fat")) {
+                                    Log.i(TAG, lineText);
+                                    String[] parsedNutritionItem = lineText.split(" ");
+                                    Float calories = (float)-1;
+                                    if (parsedNutritionItem.length >= 4) {
+                                       calories = Float.parseFloat(parsedNutritionItem[3]);
+                                    }
+                                    nutritionItems.put("Calories from fat", calories);
+                                    if (calories >= 0 ) nutriInfoBuilder.caloriesFromFat(calories);
+                                } else if (lineText.contains("Servings Per Container")) {
+                                    Log.i(TAG, lineText);
+                                    String[] parsedNutritionItem = lineText.split(" ");
+                                    Float servings = (float)-1;
+                                    if (parsedNutritionItem.length >= 5) {
+                                        servings = Float.parseFloat(parsedNutritionItem[4]);
+                                    } else if (parsedNutritionItem.length >= 4) {
+                                        servings = Float.parseFloat(parsedNutritionItem[3]);
+                                    }
+                                    nutritionItems.put("Servings Per Container", servings);
+                                    if (servings >= 0 ) nutriInfoBuilder.servingsPerContainer(servings);
                                 } else if (lineText.contains("Carbohydrate")) {
                                     Log.i(TAG, lineText);
                                     Float grams = parseOneWord(lineText);
@@ -273,9 +368,9 @@ public class ScanFragment extends Fragment {
                                     if (grams >= 0 ) nutriInfoBuilder.carbohydrates(grams);
                                 } else if (lineText.contains("Calories")) {
                                     Log.i(TAG, lineText);
-                                    Float grams = parseOneWord(lineText);
-                                    nutritionItems.put("Calories", grams);
-                                    if (grams >= 0 ) nutriInfoBuilder.calories(grams);
+                                    Float amount = parseOneWord(lineText);
+                                    nutritionItems.put("Calories", amount);
+                                    if (amount >= 0 ) nutriInfoBuilder.calories(amount);
                                 } else if (lineText.contains("Serving size")) {
                                     Log.i(TAG, lineText);
                                     Pattern pattern = Pattern.compile("Serving size (\\d) (\\w+).*");

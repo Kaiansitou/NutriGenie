@@ -18,6 +18,7 @@ import com.github.mikephil.charting.formatter.PercentFormatter;
 
 import android.graphics.Color;
 import com.github.mikephil.charting.utils.ViewPortHandler;
+import sharefirebasepreferences.crysxd.de.lib.SharedFirebasePreferences;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -79,11 +80,37 @@ public class HomeFragment extends Fragment {
             e.printStackTrace();
         }
 
-        BarChart stackedBarChart = new BarChart(view.findViewById(R.id.home_bar_chart), getActivity());
-        //stackedBarChart.changePreferences(new String[]{"Trans Fat",
-        //        "Saturated Fat",
-        //        "Total Fat"});
-        //stackedBarChart.increaseNutritionEntryValue();
+        SharedFirebasePreferences preferences = SharedFirebasePreferences.getDefaultInstance(getActivity());
+        ArrayList<String> names = new ArrayList<>();
+        if (preferences.getBoolean("calcium", false)) names.add("Calcium");
+        if (preferences.getBoolean("potassium", false)) names.add("Potassium");
+        if (preferences.getBoolean("iron", false)) names.add("Iron");
+        if (preferences.getBoolean("calcium", false)) names.add("Calcium");
+        if (preferences.getBoolean("folate", false)) names.add("Folate");
+        if (preferences.getBoolean("biotin", false)) names.add("Biotin");
+        if (preferences.getBoolean("pantothenic_acid", false)) names.add("Pantothenic Acid");
+        if (preferences.getBoolean("niacin", false)) names.add("Niacin");
+        if (preferences.getBoolean("riboflavin", false)) names.add("Riboflavin");
+        if (preferences.getBoolean("thiamin", false)) names.add("Thiamin");
+        if (preferences.getBoolean("vitamin_k", false)) names.add("Vitamin K");
+        if (preferences.getBoolean("vitamin_e", false)) names.add("Vitamin E");
+        if (preferences.getBoolean("vitamin_d", false)) names.add("Vitamin D");
+        if (preferences.getBoolean("vitamin_c", false)) names.add("Vitamin C");
+        if (preferences.getBoolean("vitamin_b12", false)) names.add("Vitamin B12");
+        if (preferences.getBoolean("vitamin_b6", false)) names.add("Vitamin B6");
+        if (preferences.getBoolean("vitamin_a", false)) names.add("Vitamin A");
+        if (preferences.getBoolean("protein", false)) names.add("Protein");
+        if (preferences.getBoolean("sugar", false)) names.add("Sugar");
+        if (preferences.getBoolean("fiber", false)) names.add("Fiber");
+        if (preferences.getBoolean("carbohydrates", false)) names.add("Carbohydrates");
+        if (preferences.getBoolean("sodium", false)) names.add("Sodium");
+        if (preferences.getBoolean("cholesterol", false)) names.add("Cholesterol");
+        if (preferences.getBoolean("trans_fat", false)) names.add("Trans Fat");
+        if (preferences.getBoolean("saturated_fat", false)) names.add("Saturated Fat");
+        if (preferences.getBoolean("total_fat", false)) names.add("Total Fat");
+
+        BarChart stackedBarChart = new BarChart(view.findViewById(R.id.home_bar_chart));
+        stackedBarChart.changePreferences(names.stream().toArray(String[]::new));
         HorizontalBarChart chart = stackedBarChart.getChart();
         ArrayList<BarEntry> entries = stackedBarChart.getEntries();
         BarDataSet barDataSet = new BarDataSet(entries, "");
