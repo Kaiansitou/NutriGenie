@@ -6,34 +6,38 @@
              android:layout_height="match_parent"
              android:orientation="vertical" >
 
-
-        <EditText
-                android:id="@+id/start"
-                android:clickable="true"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="11/14/2018"/>
-
-        <EditText
-                android:id="@+id/end"
-                android:clickable="true"
-                android:layout_width="match_parent"
-                android:layout_height="97dp"
-                android:hint="11/20/2018"/>
-
         <RelativeLayout
                 android:id="@+id/container"
                 android:layout_width="match_parent"
                 android:layout_height="521dp"
                 tools:context="com.fruithat.nutrigenie.MainActivity">
 
-
-                <com.github.mikephil.charting.charts.LineChart
-                        android:id="@+id/chart"
-                        style="@style/AppTheme"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentStart="true"/>
+                <EditText
+                        android:id="@+id/start"
+                        android:clickable="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:hint="Start Date: 12/01/2018"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"/>
+                <EditText
+                        android:id="@+id/end"
+                        android:clickable="true"
+                        android:layout_width="192dp"
+                        android:layout_height="wrap_content"
+                        android:hint="End Date: 12/31/2018"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="2dp"/>
 
         </RelativeLayout>
+
+        <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/chart"
+                style="@style/AppTheme"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="45dp"/>
 </FrameLayout>
