@@ -344,23 +344,30 @@ public class ScanFragment extends Fragment {
                                 } else if (lineText.contains("Calories from Fat")) {
                                     Log.i(TAG, lineText);
                                     String[] parsedNutritionItem = lineText.split(" ");
-                                    Float calories = (float)-1;
-                                    if (parsedNutritionItem.length >= 4) {
-                                       calories = Float.parseFloat(parsedNutritionItem[3]);
+                                    try {
+                                        if (parsedNutritionItem.length >= 4) {
+                                            Float calories = Float.parseFloat(parsedNutritionItem[3]);
+                                            nutritionItems.put("Calories from fat", calories);
+                                            if (calories >= 0) nutriInfoBuilder.caloriesFromFat(calories);
+                                        }
+                                    } catch (NumberFormatException e) {
+                                        Log.e(TAG, e.getMessage());
                                     }
-                                    nutritionItems.put("Calories from fat", calories);
-                                    if (calories >= 0 ) nutriInfoBuilder.caloriesFromFat(calories);
                                 } else if (lineText.contains("Servings Per Container")) {
                                     Log.i(TAG, lineText);
                                     String[] parsedNutritionItem = lineText.split(" ");
                                     Float servings = (float)-1;
-                                    if (parsedNutritionItem.length >= 5) {
-                                        servings = Float.parseFloat(parsedNutritionItem[4]);
-                                    } else if (parsedNutritionItem.length >= 4) {
-                                        servings = Float.parseFloat(parsedNutritionItem[3]);
+                                    try {
+                                        if (parsedNutritionItem.length >= 5) {
+                                            servings = Float.parseFloat(parsedNutritionItem[4]);
+                                        } else if (parsedNutritionItem.length >= 4) {
+                                            servings = Float.parseFloat(parsedNutritionItem[3]);
+                                        }
+                                        nutritionItems.put("Servings Per Container", servings);
+                                        if (servings >= 0 ) nutriInfoBuilder.servingsPerContainer(servings);
+                                    } catch (NumberFormatException e) {
+                                        Log.e(TAG, e.getMessage());
                                     }
-                                    nutritionItems.put("Servings Per Container", servings);
-                                    if (servings >= 0 ) nutriInfoBuilder.servingsPerContainer(servings);
                                 } else if (lineText.contains("Carbohydrate")) {
                                     Log.i(TAG, lineText);
                                     Float grams = parseOneWord(lineText);
@@ -378,8 +385,12 @@ public class ScanFragment extends Fragment {
                                     while (matcher.find()) {
                                         String servingSize = matcher.group(1);
                                         String servingType = matcher.group(2);
-                                        int servingSizeInt = Integer.parseInt(servingSize);
-                                        nutriInfoBuilder.servingSize(servingSizeInt);
+                                        try {
+                                            int servingSizeInt = Integer.parseInt(servingSize);
+                                            nutriInfoBuilder.servingSize(servingSizeInt);
+                                        } catch (NumberFormatException e) {
+                                            Log.e(TAG, e.getMessage());
+                                        }
                                         nutriInfoBuilder.servingType(servingType);
                                     }
                                 }
