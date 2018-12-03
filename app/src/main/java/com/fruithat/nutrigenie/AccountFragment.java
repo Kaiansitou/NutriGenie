@@ -32,17 +32,10 @@ public class AccountFragment extends Fragment {
     private DatabaseReference mDatabase;
     private FirebaseUser mCurrentUser;
 
-    private MainActivity mActivity;
-
-    public AccountFragment() {
-        super();
-
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
         // Inflate the layout defined in quote_fragment.xml
         // The last parameter is false because the returned view does not need to be attached to the container ViewGroup
         View view = inflater.inflate(R.layout.fragment_account, container, false);
@@ -116,6 +109,12 @@ public class AccountFragment extends Fragment {
                     }
                 } else if((weightText.getText().toString().equals("") && heightText.getText().toString().equals("") &&
                         ageText.getText().toString().equals(""))){
+                    Toast.makeText(getContext(), "Please enter your information", Toast.LENGTH_LONG).show();
+                }else if((weightText.getText().toString().equals("") && heightText.getText().toString().equals(""))){
+                    Toast.makeText(getContext(), "Please enter your information", Toast.LENGTH_LONG).show();
+                }else if((weightText.getText().toString().equals("")  && ageText.getText().toString().equals(""))){
+                    Toast.makeText(getContext(), "Please enter your information", Toast.LENGTH_LONG).show();
+                }else if(heightText.getText().toString().equals("") && ageText.getText().toString().equals("")){
                     Toast.makeText(getContext(), "Please enter your information", Toast.LENGTH_LONG).show();
                 }
         });

@@ -3,9 +3,6 @@ package com.fruithat.nutrigenie;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Point;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -18,8 +15,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -27,15 +22,12 @@ import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
-import com.google.firebase.ml.vision.text.RecognizedLanguage;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,16 +35,19 @@ import static android.app.Activity.RESULT_OK;
 
 public class ScanFragment extends Fragment {
 
+    // Firebase ML Kit image and model
     private FirebaseVisionImage image;
-    private Bitmap bitmap;
-    private FirebaseVisionTextRecognizer textRecognizer;
-    private Button testScanButton;
-    private Button scanButton;
+    private FirebaseVisionTextRecognizer textRecognizer; // downloaded from google when the app is installed
+
+    // Data structures for storing parsed information
     private NutritionInformation.NutritionInformationBuilder nutriInfoBuilder;
     private HashMap<String, Float> nutritionItems; // only used for debugging
-    private ImageView imageView;
+
+    // Path where photo can be retrieved after takePictureIntent returns
     private String mCurrentPhotoPath;
     static final int REQUEST_TAKE_PHOTO = 1;
+
+    // Needed so that startStatisticsActivity can reliably have access to this activity
     private FragmentActivity activity;
 
     private static final String TAG = "NutriGenie";
@@ -60,11 +55,9 @@ public class ScanFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_scan, container, false);
-        imageView = view.findViewById(R.id.retrieved_image);
         // Inflate the layout defined in quote_fragment.xml
         // The last parameter is false because the returned view does not need to be attached to the container ViewGroup
-        return view;
+        return inflater.inflate(R.layout.fragment_scan, container, false);
     }
 
     @Override
@@ -84,20 +77,7 @@ public class ScanFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        testScanButton = getActivity().findViewById(R.id.test_scan_button);
-        testScanButton.setOnClickListener(new Button.OnClickListener(){
-            public void onClick(View v) {
-                bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.nutrition_label_large);
-                image = FirebaseVisionImage.fromBitmap(bitmap);
-                processLabel();
-            }
-        });
-        scanButton = getActivity().findViewById(R.id.scan_button);
-        scanButton.setOnClickListener(new Button.OnClickListener(){
-            public void onClick(View v) {
-                dispatchTakePictureIntent();
-            }
-        });
+        dispatchTakePictureIntent();
     }
 
     @Override
@@ -107,19 +87,19 @@ public class ScanFragment extends Fragment {
     }
 
     private void startStatisticsActivity() {
-        // Yan-Jen: change MainActivity to wherever you need the scanned data
-        // maybe a new Statistics Activity or fragment?
         if (activity != null) {
-            Log.i(TAG, "GET ACTIVITY IS NOT NULL");
             Intent intent = new Intent(activity, MainActivity.class);
             NutritionInformation nutriInfo = nutriInfoBuilder.build();
+
+            // Debugging
             for (String key : nutritionItems.keySet()) {
                 Log.i(TAG, key + " => " + nutritionItems.get(key));
             }
+
             intent.putExtra("info", nutriInfo);
             activity.startActivity(intent);
         } else {
-            Log.i(TAG, "GET ACTIVITY IS NULL, OH NO");
+            Log.e(TAG, "Current activity is null");
         }
     }
 
@@ -161,7 +141,6 @@ public class ScanFragment extends Fragment {
 
             if (bitmap != null) {
                 image = FirebaseVisionImage.fromBitmap(bitmap);
-//                imageView.setImageBitmap(bitmap);
                 processLabel();
             }
         }
@@ -344,23 +323,30 @@ public class ScanFragment extends Fragment {
                                 } else if (lineText.contains("Calories from Fat")) {
                                     Log.i(TAG, lineText);
                                     String[] parsedNutritionItem = lineText.split(" ");
-                                    Float calories = (float)-1;
-                                    if (parsedNutritionItem.length >= 4) {
-                                       calories = Float.parseFloat(parsedNutritionItem[3]);
+                                    try {
+                                        if (parsedNutritionItem.length >= 4) {
+                                            Float calories = Float.parseFloat(parsedNutritionItem[3]);
+                                            nutritionItems.put("Calories from fat", calories);
+                                            if (calories >= 0) nutriInfoBuilder.caloriesFromFat(calories);
+                                        }
+                                    } catch (NumberFormatException e) {
+                                        Log.e(TAG, e.getMessage());
                                     }
-                                    nutritionItems.put("Calories from fat", calories);
-                                    if (calories >= 0 ) nutriInfoBuilder.caloriesFromFat(calories);
                                 } else if (lineText.contains("Servings Per Container")) {
                                     Log.i(TAG, lineText);
                                     String[] parsedNutritionItem = lineText.split(" ");
                                     Float servings = (float)-1;
-                                    if (parsedNutritionItem.length >= 5) {
-                                        servings = Float.parseFloat(parsedNutritionItem[4]);
-                                    } else if (parsedNutritionItem.length >= 4) {
-                                        servings = Float.parseFloat(parsedNutritionItem[3]);
+                                    try {
+                                        if (parsedNutritionItem.length >= 5) {
+                                            servings = Float.parseFloat(parsedNutritionItem[4]);
+                                        } else if (parsedNutritionItem.length >= 4) {
+                                            servings = Float.parseFloat(parsedNutritionItem[3]);
+                                        }
+                                        nutritionItems.put("Servings Per Container", servings);
+                                        if (servings >= 0 ) nutriInfoBuilder.servingsPerContainer(servings);
+                                    } catch (NumberFormatException e) {
+                                        Log.e(TAG, e.getMessage());
                                     }
-                                    nutritionItems.put("Servings Per Container", servings);
-                                    if (servings >= 0 ) nutriInfoBuilder.servingsPerContainer(servings);
                                 } else if (lineText.contains("Carbohydrate")) {
                                     Log.i(TAG, lineText);
                                     Float grams = parseOneWord(lineText);
@@ -378,8 +364,12 @@ public class ScanFragment extends Fragment {
                                     while (matcher.find()) {
                                         String servingSize = matcher.group(1);
                                         String servingType = matcher.group(2);
-                                        int servingSizeInt = Integer.parseInt(servingSize);
-                                        nutriInfoBuilder.servingSize(servingSizeInt);
+                                        try {
+                                            int servingSizeInt = Integer.parseInt(servingSize);
+                                            nutriInfoBuilder.servingSize(servingSizeInt);
+                                        } catch (NumberFormatException e) {
+                                            Log.e(TAG, e.getMessage());
+                                        }
                                         nutriInfoBuilder.servingType(servingType);
                                     }
                                 }
@@ -393,7 +383,6 @@ public class ScanFragment extends Fragment {
                         new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Log.e(TAG, "FAILURE!");
                                 Log.e(TAG, e.getMessage());
                             }
                         });
@@ -404,7 +393,7 @@ public class ScanFragment extends Fragment {
         if (parsedNutritionItem.length >= 2) {
             return parseGrams(parsedNutritionItem[1]);
         } else {
-            return -1; // maybe throw an exception instead
+            return -1;
         }
     }
 
@@ -413,7 +402,7 @@ public class ScanFragment extends Fragment {
         if (parsedNutritionItem.length >= 3) {
             return parseGrams(parsedNutritionItem[2]);
         } else {
-            return -1; // maybe throw an exception instead
+            return -1;
         }
     }
 

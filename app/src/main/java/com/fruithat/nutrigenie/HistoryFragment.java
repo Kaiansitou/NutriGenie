@@ -32,8 +32,10 @@ public class HistoryFragment extends Fragment {
     private LineChart historyChart;
     private EditText startDate;
     private EditText endDate;
-    Calendar myCalendar;
-    Calendar myCalendar2;
+    Calendar myCalendar = null;
+    Calendar myCalendar2 = null;
+    String myFormat = "MM/dd/yy";
+    SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
     public HistoryFragment() {
         // Required empty public constructor
     }
@@ -41,10 +43,9 @@ public class HistoryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         historyChart = (LineChart) view.findViewById(R.id.chart);
+
         startDate = view.findViewById(R.id.start);
         endDate = view.findViewById(R.id.end);
-        myCalendar = Calendar.getInstance();
-        myCalendar2 = Calendar.getInstance();
 
         DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
 
@@ -52,33 +53,53 @@ public class HistoryFragment extends Fragment {
             public void onDateSet(DatePicker view, int year, int monthOfYear,
                                   int dayOfMonth) {
                 // TODO Auto-generated method stub
-                String myFormat = "MM/dd/yy";
-                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-                if(!myCalendar.equals(Calendar.getInstance())) {
+
+                if(myCalendar != null) {
                     myCalendar.set(Calendar.YEAR, year);
                     myCalendar.set(Calendar.MONTH, monthOfYear);
                     myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                     startDate.setText(sdf.format(myCalendar.getTime()));
+                    myCalendar = null;
 
-                } else {
+                }
+                if(myCalendar2 != null){
                     myCalendar2.set(Calendar.YEAR, year);
                     myCalendar2.set(Calendar.MONTH, monthOfYear);
                     myCalendar2.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                     endDate.setText(sdf.format(myCalendar2.getTime()));
+                    myCalendar2 = null;
 
                 }
-
+            //    startDate.setText(sdf.format(myCalendar.getTime()));
             }
 
         };
+
+        /*DatePickerDialog.OnDateSetListener date2 = new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                // TODO Auto-generated method stub
+
+                myCalendar2.set(Calendar.YEAR, year);
+                myCalendar2.set(Calendar.MONTH, monthOfYear);
+                myCalendar2.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            }
+
+        }; */
+
+
 
         startDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                new DatePickerDialog(getContext(), date, myCalendar
+                myCalendar = Calendar.getInstance();
+                 DatePickerDialog firstDate = new DatePickerDialog(getContext(), date, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                        myCalendar.get(Calendar.DAY_OF_MONTH));
+                firstDate.show();
             }
         });
 
@@ -86,11 +107,14 @@ public class HistoryFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                new DatePickerDialog(getContext(), date, myCalendar2
+                myCalendar2 = Calendar.getInstance();
+                DatePickerDialog secDate = new DatePickerDialog(getContext(), date, myCalendar2
                         .get(Calendar.YEAR), myCalendar2.get(Calendar.MONTH),
-                        myCalendar2.get(Calendar.DAY_OF_MONTH)).show();
+                        myCalendar2.get(Calendar.DAY_OF_MONTH));
+                secDate.show();
             }
         });
+
         drawChart();
     }
 
@@ -107,17 +131,12 @@ public class HistoryFragment extends Fragment {
     private void drawChart() {
         historyChart.setBackgroundColor(Color.WHITE);
         historyChart.setDrawBorders(true);
+        try {
+            Date dayStart = sdf.parse(startDate.toString());
+            Date dayEnd = sdf.parse(endDate.toString());
+        } catch (Exception e){
 
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy"); // here set the pattern as you date in string was containing like date/month/year
-       /* try {
-            String start = startDate.getText().toString();
-            String end = startDate.getText().toString();
-            Date dayStart = sdf.parse(start);
-            Date dayEnd = sdf.parse(end);
-
-        } catch (ParseException e) {
-        } */
-      //
+        }
 
         /*
         ArrayList<String> xAxis = new ArrayList<>();
