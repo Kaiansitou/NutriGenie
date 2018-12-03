@@ -64,7 +64,7 @@ public class HistoryFragment extends Fragment {
                     myCalendar2.set(Calendar.YEAR, year);
                     myCalendar2.set(Calendar.MONTH, monthOfYear);
                     myCalendar2.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                    startDate.setText(sdf.format(myCalendar2.getTime()));
+                    endDate.setText(sdf.format(myCalendar2.getTime()));
 
                 }
 

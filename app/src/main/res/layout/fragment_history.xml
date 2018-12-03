@@ -21,7 +21,8 @@
                         android:layout_height="wrap_content"
                         android:hint="From: 12/01/2018"
                         android:layout_alignParentTop="true" android:layout_alignParentStart="true"
-                        android:layout_marginStart="48dp"/>
+                        android:layout_marginStart="50dp"
+                android:layout_marginEnd="5dp"/>
                 <EditText
                         android:id="@+id/end"
                         android:clickable="true"
@@ -32,7 +33,8 @@
                         android:textSize="16dp"
                         android:layout_alignParentTop="true"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="72dp"/>
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="50dp"/>
 
         </RelativeLayout>
 
