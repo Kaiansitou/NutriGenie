@@ -38,6 +38,12 @@
                                                                         android:id="@+id/home_horizontal_stacked_barchart"
                 >
                 </com.github.mikephil.charting.charts.HorizontalBarChart>
+                <ImageView
+                        android:layout_width="301dp"
+                        android:layout_height="76dp" app:srcCompat="@drawable/legend1"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:id="@+id/imageView2" android:cropToPadding="false" android:adjustViewBounds="false"/>
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

@@ -65,119 +65,135 @@ public class NutritionInformation implements Parcelable {
     }
 
     public double getServingSize() {
-        return (double) nutrients.getOrDefault("serving_size", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("serving_size", 0)));
     }
 
     public double getServingsPerContainer() {
-        return (double) nutrients.getOrDefault("servings_per_container", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("servings_per_container", 0)));
     }
 
     public double getCalories() {
-        return (double) nutrients.getOrDefault("calories", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("calories", 0)));
     }
 
     public double getCaloriesFromFat() {
-        return (double) nutrients.getOrDefault("calories_from_fat", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("calories_from_fat", 0)));
     }
 
     public double getTotalFat() {
-        return (double) nutrients.getOrDefault("total_fat", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("total_fat", 0)));
     }
 
     public double getSaturatedFat() {
-        return (double) nutrients.getOrDefault("saturated_fat", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("saturated_fat", 0)));
     }
 
     public double getTransFat() {
-        return (double) nutrients.getOrDefault("trans_fat", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("trans_fat", 0)));
     }
 
     public double getCholesterol() {
-        return (double) nutrients.getOrDefault("cholesterol", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("cholesterol", 0)));
     }
 
     public double getSodium() {
-        return (double) nutrients.getOrDefault("sodium", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("sodium", 0)));
     }
 
     public double getCarbohydrates() {
-        return (double) nutrients.getOrDefault("carbohydrates", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("carbohydrates", 0)));
     }
 
     public double getFiber() {
-        return (double) nutrients.getOrDefault("fiber", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("fiber", 0)));
     }
 
     public double getSugar() {
-        return (double) nutrients.getOrDefault("sugar", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("sugar", 0)));
     }
 
     public double getProtein() {
-        return (double) nutrients.getOrDefault("protein", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("protein", 0)));
     }
 
     public double getVitaminA() {
-        return (double) nutrients.getOrDefault("vitamin_a", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("vitamin_a", 0)));
     }
 
     public double getVitaminB6() {
-        return (double) nutrients.getOrDefault("vitamin_b6", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("vitamin_b6", 0)));
     }
 
     public double getVitaminB12() {
-        return (double) nutrients.getOrDefault("vitamin_b12", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("vitamin_b12", 0)));
     }
 
     public double getVitaminC() {
-        return (double) nutrients.getOrDefault("vitamin_c", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("vitamin_c", 0)));
     }
 
     public double getVitaminD() {
-        return (double) nutrients.getOrDefault("vitamin_d", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("vitamin_d", 0)));
     }
 
     public double getVitaminE() {
-        return (double) nutrients.getOrDefault("vitamin_e", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("vitamin_e", 0)));
     }
 
     public double getVitaminK() {
-        return (double) nutrients.getOrDefault("vitamin_k", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("vitamin_k", 0)));
     }
 
     public double getThiamin() {
-        return (double) nutrients.getOrDefault("thiamin", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("thiamin", 0)));
     }
 
     public double getRiboflavin() {
-        return (double) nutrients.getOrDefault("riboflavin", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("riboflavin", 0)));
     }
 
     public double getNiacin() {
-        return (double) nutrients.getOrDefault("niacin", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("niacin", 0)));
     }
 
     public double getPantothenicAcid() {
-        return (double) nutrients.getOrDefault("pantothenic_acid", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("pantothenic_acid", 0)));
     }
 
     public double getBiotin() {
-        return (double) nutrients.getOrDefault("biotin", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("biotin", 0)));
     }
 
     public double getFolate() {
-        return (double) nutrients.getOrDefault("folate", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("folate", 0)));
     }
 
     public double getIron() {
-        return (double) nutrients.getOrDefault("iron", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("iron", 0)));
     }
 
     public double getPotassium() {
-        return (double) nutrients.getOrDefault("potassium", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("potassium", 0)));
     }
 
     public double getCalcium() {
-        return (double) nutrients.getOrDefault("calcium", 0);
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("calcium", 0)));
+    }
+
+    public double getChloride() {
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("chloride", 0)));
+    }
+
+    public double getCopper() {
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("copper", 0)));
+    }
+
+    public double getChromium() {
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("chromium", 0)));
+    }
+
+    public double getIodine() {
+        return Double.parseDouble(String.valueOf(nutrients.getOrDefault("iodine", 0)));
     }
 
     public HashMap<String, Object> getDatabaseHashMap() {
