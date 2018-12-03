@@ -1,51 +1,45 @@
 package com.fruithat.nutrigenie;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
-import com.github.mikephil.charting.data.*;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.YAxis;
-
-import com.github.mikephil.charting.formatter.*;
-
-import android.util.Log;
-
+import com.github.mikephil.charting.data.*;
 import com.github.mikephil.charting.formatter.PercentFormatter;
-
-import android.graphics.Color;
-import com.github.mikephil.charting.utils.ViewPortHandler;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.*;
 import sharefirebasepreferences.crysxd.de.lib.SharedFirebasePreferences;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
+import java.util.*;
 
 public class HomeFragment extends Fragment {
     String TAG = "Home Fragment";
-    int green = Color.rgb(5,205,110); //Green
-    int light_gray = Color.rgb(220,220,220); //Light Gray
-    int red = Color.rgb(223,61,61); //Red
+    int green = Color.rgb(5, 205, 110); //Green
+    int light_gray = Color.rgb(220, 220, 220); //Light Gray
+    int red = Color.rgb(223, 61, 61); //Red
+
     public HomeFragment() {
 
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         // Inflate the layout defined in fragment_home.xml
         // The last parameter is false because the returned view does not need to be attached to the container ViewGroup
-        View view =  inflater.inflate(R.layout.fragment_home, container, false);
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         String date = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()).format(new Date());
 
@@ -73,7 +67,7 @@ public class HomeFragment extends Fragment {
             instance.getNutritionInformation(startTime, endTime, new NutritionHistoryCallback() {
                 @Override
                 public void onDataReceived(HashMap<Long, NutritionInformation> nutritionInformation) {
-                    for (Long k: nutritionInformation.keySet()) {
+                    for (Long k : nutritionInformation.keySet()) {
                         Log.i(TAG, "Value: " + String.valueOf(nutritionInformation.get(k).getCalcium()));
                     }
                 }
@@ -113,19 +107,82 @@ public class HomeFragment extends Fragment {
         if (preferences.getBoolean("total_fat", false)) names.add("Total Fat");
 
         String[] nutritionNames = names.stream().toArray(String[]::new);
-        Log.i(TAG,String.valueOf(nutritionNames.length));
+        Log.i(TAG, String.valueOf(nutritionNames.length));
         HorizontalBarChart stackedBarChart = view.findViewById(R.id.home_horizontal_stacked_barchart);
 
         BarChartBuilder barChartBuilder = new BarChartBuilder(stackedBarChart);
         barChartBuilder.changePreferences(nutritionNames);
-        barChartBuilder.changeEntry(nutritionNames, "Sugar", 25f);
-        barChartBuilder.changeEntry(nutritionNames, "Sodium", 125f);
-        barChartBuilder.changeEntry(nutritionNames, "Sugar", 75f);
+
+        Calendar cal = new GregorianCalendar();
+        cal.setTime(new Date());
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        NutritionHistory.getInstance().getNutritionInformation(cal.getTime(), new Date(), nutritionInformation -> {
+            DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+            FirebaseUser mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
+            mDatabase.child("account").child(mCurrentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    double caloriesNeeded = 2000L;
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        switch (data.getKey()) {
+                            case "calories":
+                                caloriesNeeded = Double.parseDouble(String.valueOf(data.getValue()));
+                        }
+                    }
+
+                    NutritionInformation.NutritionInformationBuilder builder = new NutritionInformation.NutritionInformationBuilder();
+                    NutritionInformation current = builder.build();
+
+                    for (NutritionInformation info : nutritionInformation.values()) {
+                        current = builder
+                                .calories(current.getCalories() + info.getCalories())
+                                .cholesterol(current.getCholesterol() + info.getCholesterol())
+                                .fiber(current.getFiber() + info.getFiber())
+                                .potassium(current.getPotassium() + info.getPotassium())
+                                .protein(current.getProtein() + info.getProtein())
+                                .saturatedFat(current.getSaturatedFat() + info.getSaturatedFat())
+                                .sodium(current.getSodium() + info.getSodium())
+                                .sugar(current.getSugar() + info.getSugar())
+                                .totalFat(current.getTotalFat() + info.getTotalFat())
+                                .transFat(current.getTransFat() + info.getTransFat())
+                                .build();
+                    }
+
+                    barChartBuilder.changeEntry(nutritionNames, "Potassium", (float) (current.getPotassium() / (caloriesNeeded / 2000 * 3500)));
+                    barChartBuilder.changeEntry(nutritionNames, "Protein", (float) (current.getProtein() / (caloriesNeeded / 2000 * 50)));
+                    barChartBuilder.changeEntry(nutritionNames, "Sugar", 100f + (float) current.getSugar());
+                    barChartBuilder.changeEntry(nutritionNames, "Fiber", (float) (current.getFiber() / (caloriesNeeded / 2000 * 25)));
+                    barChartBuilder.changeEntry(nutritionNames, "Carbohydrates", (float) (current.getCarbohydrates() / (caloriesNeeded / 2000 * 300)));
+                    barChartBuilder.changeEntry(nutritionNames, "Sodium", (float) (current.getSodium() / (caloriesNeeded / 2000 * 2400)));
+                    barChartBuilder.changeEntry(nutritionNames, "Cholesterol", (float) (current.getCholesterol() / (caloriesNeeded / 2000 * 300)));
+                    barChartBuilder.changeEntry(nutritionNames, "Trans Fat", 100f + (float) current.getTransFat());
+                    barChartBuilder.changeEntry(nutritionNames, "Saturated Fat", (float) (current.getSaturatedFat() / (caloriesNeeded / 2000 * 20)));
+                    barChartBuilder.changeEntry(nutritionNames, "Total Fat", (float) (current.getTotalFat() / (caloriesNeeded / 2000 * 65)));
+
+                    stackedBarChart.invalidate();
+
+                    PieChart pieChart = makePieChart(
+                            view.findViewById(R.id.home_piechart),
+                            caloriesNeeded,
+                            current.getCalories());
+
+                    pieChart.invalidate();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        });
 
         LayoutParams params = stackedBarChart.getLayoutParams();
         params.height = 1800;
         stackedBarChart.setLayoutParams(params);
-        Log.i(TAG,String.valueOf(params.height));
+        Log.i(TAG, String.valueOf(params.height));
 
 
         ArrayList<BarEntry> entries = barChartBuilder.getEntries();
@@ -153,7 +210,6 @@ public class HomeFragment extends Fragment {
         //barDataSet.notifyDataSetChanged();
         //stackedBarChart.notifyDataSetChanged();
         stackedBarChart.invalidate();
-
 
 
         PieChart pieChart = makePieChart(
