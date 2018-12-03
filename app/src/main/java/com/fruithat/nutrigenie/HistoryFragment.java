@@ -191,15 +191,15 @@ public class HistoryFragment extends Fragment {
         l.setWordWrapEnabled(true);
         l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
     //   l.setOrientation(Legend.LegendOrientation.VERTICAL);
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
-       l.setFormSize(15f);
-       l.setXOffset(5f);
-       l.setYOffset(10f);
-        l.setXEntrySpace(5f);
-        l.setFormLineWidth(2f);
-        l.setForm(Legend.LegendForm.CIRCLE);
-        l.setYEntrySpace(5f);
-        l.setTextSize(20f);
+         l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+         l.setFormSize(15f);
+         l.setXOffset(5f);
+         l.setYOffset(10f);
+         l.setXEntrySpace(5f);
+         l.setFormLineWidth(2f);
+         l.setForm(Legend.LegendForm.CIRCLE);
+         l.setYEntrySpace(5f);
+         l.setTextSize(20f);
          l.setStackSpace(5f);
         historyChart.invalidate();
     }
