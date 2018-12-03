@@ -78,35 +78,9 @@ public class HomeFragment extends Fragment {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        String[] allNutritionNames = {
-                "Calcium",
-                "Potassium",
-                "Iron",
-                "Folate",
-                "Biotin",
-                "Pantothenic Acid",
-                "Niacin",
-                "Riboflavin",
-                "Thiamin",
-                "Vitamin K",
-                "Vitamin E",
-                "Vitamin D",
-                "Vitamin C",
-                "Vitamin B12",
-                "Vitamin B6",
-                "Vitamin A",
-                "Protein",
-                "Sugar",
-                "Fiber",
-                "Carbohydrates",
-                "Sodium",
-                "Cholesterol",
-                "Trans Fat",
-                "Saturated Fat",
-                "Total Fat"
-        };
 
-        BarChart stackedBarChart = new BarChart(view.findViewById(R.id.home_bar_chart), allNutritionNames);
+
+        BarChart stackedBarChart = new BarChart(view.findViewById(R.id.home_bar_chart));
         stackedBarChart.changePreferences(new String[]{"Trans Fat",
                 "Saturated Fat",
                 "Total Fat"});
@@ -133,41 +107,11 @@ public class HomeFragment extends Fragment {
         chart.moveViewTo(0,chart.getAxisLeft().getAxisMaximum(), YAxis.AxisDependency.LEFT);
         chart.invalidate();
 
-        PieChart pieChart = (PieChart) view.findViewById(R.id.total_calorie_pie_chart);
-        pieChart.setHoleRadius(80f);
-        pieChart.setTransparentCircleRadius(85f);
-        pieChart.setCenterText("Calories\n1200/2000");
-        pieChart.setCenterTextSize(17f);
-        pieChart.setCenterTextColor(Color.GRAY);
-        pieChart.setExtraTopOffset(10f);
-        pieChart.setExtraBottomOffset(20f);
-        pieChart.setExtraLeftOffset(25f);
-        pieChart.setExtraRightOffset(25f);
-        pieChart.setUsePercentValues(true);
 
-        pieChart.getLegend().setEnabled(false);
-        pieChart.setDescription(null);
-
-        ArrayList<PieEntry> pieData = new ArrayList<>();
-
-        //pieData.add(new PieEntry(0.4f,"Calories Available"));
-        //pieData.add(new PieEntry(0.6f,"Calories Consumed"));
-        pieData.add(new PieEntry(2000f - 1263f,"Calories Available"));
-        pieData.add(new PieEntry(1263f,"Calories Consumed"));
-        PieDataSet set2 = new PieDataSet(pieData, "");
-        pieChart.setDrawSliceText(false);
-        set2.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
-        set2.setValueLinePart1Length(0.05f);
-        set2.setValueLinePart2Length(0.5f);
-        set2.setValueFormatter(new PercentFormatter());
-        pieChart.setRotationEnabled(false);
-        PieData data2 = new PieData(set2);
-
-        set2.setValueTextSize(15f);
-        set2.setValueTextColor(Color.BLACK);
-        set2.setColors(light_gray,green);
-        //set2.setColors(Color.RED);
-        pieChart.setData(data2);
+        PieChart pieChart = makePieChart(
+                view.findViewById(R.id.total_calorie_pie_chart),
+                2000.0,
+                567.0);
         pieChart.invalidate();
 
         return view;
@@ -182,5 +126,57 @@ public class HomeFragment extends Fragment {
         setRetainInstance(true);
 
 
+    }
+
+    public PieChart makePieChart(View view, double totalCaloriesAvailable, double totalCaloriesConsumed) {
+        PieChart pieChart = (PieChart) view;
+
+        // Center Circle Display
+        pieChart.setHoleRadius(80f);
+        pieChart.setCenterText("Calories\n" + String.valueOf((int) totalCaloriesConsumed) + "/" + String.valueOf((int) totalCaloriesAvailable));
+        pieChart.setCenterTextSize(17f);
+        pieChart.setCenterTextColor(Color.GRAY);
+        pieChart.setTransparentCircleRadius(85f);
+
+        // Display Margins
+        pieChart.setExtraTopOffset(10f);
+        pieChart.setExtraBottomOffset(20f);
+        pieChart.setExtraLeftOffset(25f);
+        pieChart.setExtraRightOffset(25f);
+
+        pieChart.getLegend().setEnabled(false); // Disable Legend
+        pieChart.setDescription(null); // Disable Description
+        pieChart.setDrawSliceText(false); // Disable Text Label
+        pieChart.setRotationEnabled(false); // Disable Rotation of Chart
+
+        ArrayList<PieEntry> pieData = new ArrayList<>();
+        if (totalCaloriesConsumed > totalCaloriesAvailable) {
+            pieData.add(new PieEntry((float) (totalCaloriesConsumed / totalCaloriesAvailable) * 100f, "Calories Consumed (Exceeded)"));
+        } else {
+            pieChart.setUsePercentValues(true); // Convert to Percentage Format
+            pieData.add(new PieEntry((float) (totalCaloriesAvailable - totalCaloriesConsumed), "Calories Available"));
+            pieData.add(new PieEntry((float) totalCaloriesConsumed, "Calories Consumed"));
+        }
+
+        PieDataSet pieDataSet = new PieDataSet(pieData, "");
+
+        // Make Value Labels Outside Pie Chart
+        pieDataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
+        pieDataSet.setValueLinePart1Length(0.1f);
+        pieDataSet.setValueLinePart2Length(0.5f);
+        pieDataSet.setValueFormatter(new PercentFormatter());
+        pieDataSet.setValueTextSize(15f);
+        pieDataSet.setValueTextColor(Color.BLACK);
+
+        if (totalCaloriesConsumed > totalCaloriesAvailable) {
+            pieDataSet.setColors(red);
+        } else {
+            pieDataSet.setColors(light_gray, green);
+        }
+
+        PieData data = new PieData(pieDataSet);
+        pieChart.setData(data);
+
+        return pieChart;
     }
 }

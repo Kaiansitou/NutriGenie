@@ -17,11 +17,40 @@ public class BarChart {
     private HorizontalBarChart chart;
     private ArrayList<BarEntry> entries;
     private ArrayList<String> labels;
+    private String[] allNutritionNames;
 
-    public BarChart(View view, String[] allNutritionNames) {
+    public BarChart(View view) {
         chart = (HorizontalBarChart) view;
         entries = new ArrayList<>();
         labels = new ArrayList<>();
+
+        allNutritionNames = new String[]{
+                "Calcium",
+                "Potassium",
+                "Iron",
+                "Folate",
+                "Biotin",
+                "Pantothenic Acid",
+                "Niacin",
+                "Riboflavin",
+                "Thiamin",
+                "Vitamin K",
+                "Vitamin E",
+                "Vitamin D",
+                "Vitamin C",
+                "Vitamin B12",
+                "Vitamin B6",
+                "Vitamin A",
+                "Protein",
+                "Sugar",
+                "Fiber",
+                "Carbohydrates",
+                "Sodium",
+                "Cholesterol",
+                "Trans Fat",
+                "Saturated Fat",
+                "Total Fat"
+        };
 
         addInitialEntries(allNutritionNames);
         setUpBarGraphDisplay();
@@ -42,6 +71,7 @@ public class BarChart {
     }
 
     private void addInitialEntries(String[] allNutritionNames) {
+
         if (entries.size() == 0) {
             for (int i = 0; i < allNutritionNames.length; i++) {
                 entries.add(new BarEntry((float)i,new float[]{0f,100f,0f}));
