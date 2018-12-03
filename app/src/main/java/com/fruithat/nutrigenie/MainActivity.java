@@ -4,12 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
-import android.support.v14.preference.PreferenceFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -32,10 +30,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import sharefirebasepreferences.crysxd.de.lib.SharedFirebasePreferences;
 import sharefirebasepreferences.crysxd.de.lib.SharedFirebasePreferencesContextWrapper;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -70,6 +66,13 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
     private HistoryFragment mHistoryFragment = new HistoryFragment();
     private AboutFragment mAboutFragment = new AboutFragment();
     private LoadingFragment mLoadingFragment = new LoadingFragment();
+
+    /*
+     * Profile Image
+     */
+    private Bitmap profilePic = null;
+
+    private boolean signinDisplayed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,30 +132,17 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
         mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(@NonNull View view, float v) {
-
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                if (currentUser != null) {
+                    CircleImageView circleImageView = findViewById(R.id.img_profile);
+                    if (profilePic != null) circleImageView.setImageBitmap(profilePic);
+                    TextView email = findViewById(R.id.email);
+                    email.setText(currentUser.getEmail());
+                }
             }
 
             @Override
             public void onDrawerOpened(@NonNull View view) {
-                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                CircleImageView circleImageView = findViewById(R.id.img_profile);
-                new Thread(() -> {
-                    try {
-                        java.net.URL url = new java.net.URL(currentUser.getPhotoUrl().toString());
-                        HttpURLConnection connection = (HttpURLConnection) url
-                                .openConnection();
-                        connection.setDoInput(true);
-                        connection.connect();
-                        InputStream input = connection.getInputStream();
-                        Bitmap myBitmap = BitmapFactory.decodeStream(input);
-                        circleImageView.post(() -> circleImageView.setImageBitmap(myBitmap));
-                    } catch (Exception e) {
-                        Log.i("NutriGenie", "Could not get a photo");
-                    }
-                }).start();
-
-                TextView email = findViewById(R.id.email);
-                email.setText(currentUser.getEmail());
             }
 
             @Override
@@ -171,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
         final BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(
                 item -> {
-                    for (int i = 0 ; i < navigation.getMenu().size(); i++) {
+                    for (int i = 0; i < navigation.getMenu().size(); i++) {
                         navigation.getMenu().getItem(i).setCheckable(false);
                     }
 
@@ -206,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
                     // close drawer when item is tapped
                     mDrawerLayout.closeDrawers();
 
-                    for (int i = 0 ; i < navigation.getMenu().size(); i++) {
+                    for (int i = 0; i < navigation.getMenu().size(); i++) {
                         navigation.getMenu().getItem(i).setCheckable(false);
                     }
 
@@ -226,6 +216,11 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
                             actionbar.setTitle("About");
                             mFragmentTransaction.replace(R.id.fragment_container, mAboutFragment);
                             break;
+                        case R.id.sidebar_signout:
+                            AuthUI.getInstance()
+                                    .signOut(this)
+                                    .addOnCompleteListener(task -> {
+                                    });
                     }
                     mFragmentTransaction.commit();
                     mFragmentManager.executePendingTransactions();
@@ -250,6 +245,7 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_SIGN_IN) {
+
             if (resultCode != RESULT_OK) {
                 finish();
             }
@@ -263,6 +259,10 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
 
         // If the current user is null, then prompt the user to sign in
         if (currentUser == null) {
+            if (signinDisplayed) return;
+
+            signinDisplayed = true;
+
             // Choose authentication providers
             List<AuthUI.IdpConfig> providers = Arrays.asList(
                     new AuthUI.IdpConfig.EmailBuilder().build(),
@@ -273,9 +273,13 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
                     AuthUI.getInstance()
                             .createSignInIntentBuilder()
                             .setAvailableProviders(providers)
+                            .setLogo(R.drawable.logo)
+                            .setTheme(R.style.AppTheme)
                             .build(),
                     RC_SIGN_IN);
         } else {
+            signinDisplayed = false;
+
             mPreferences = SharedFirebasePreferences.getDefaultInstance(this);
             PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
             mPreferences.keepSynced(true);
@@ -297,6 +301,20 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
                     Toast.makeText(getApplicationContext(), "Fetch failed", Toast.LENGTH_SHORT).show();
                 }
             });
+            new Thread(() -> {
+                try {
+                    java.net.URL url = new java.net.URL(currentUser.getPhotoUrl().toString());
+                    HttpURLConnection connection = (HttpURLConnection) url
+                            .openConnection();
+                    connection.setDoInput(true);
+                    connection.connect();
+                    InputStream input = connection.getInputStream();
+                    profilePic = BitmapFactory.decodeStream(input);
+                } catch (Exception e) {
+                    Log.i("NutriGenie", "Could not get a photo");
+                }
+            }).start();
+
         }
     }
 }

@@ -5,6 +5,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.data.*;
 import com.github.mikephil.charting.charts.PieChart;
@@ -109,10 +112,24 @@ public class HomeFragment extends Fragment {
         if (preferences.getBoolean("saturated_fat", false)) names.add("Saturated Fat");
         if (preferences.getBoolean("total_fat", false)) names.add("Total Fat");
 
-        BarChart stackedBarChart = new BarChart(view.findViewById(R.id.home_bar_chart));
-        stackedBarChart.changePreferences(names.stream().toArray(String[]::new));
-        HorizontalBarChart chart = stackedBarChart.getChart();
-        ArrayList<BarEntry> entries = stackedBarChart.getEntries();
+        String[] nutritionNames = names.stream().toArray(String[]::new);
+        Log.i(TAG,String.valueOf(nutritionNames.length));
+        HorizontalBarChart stackedBarChart = view.findViewById(R.id.home_horizontal_stacked_barchart);
+
+        BarChartBuilder barChartBuilder = new BarChartBuilder(stackedBarChart);
+        barChartBuilder.changePreferences(nutritionNames);
+        barChartBuilder.changeEntry(nutritionNames, "Sugar", 25f);
+        barChartBuilder.changeEntry(nutritionNames, "Sodium", 125f);
+        barChartBuilder.changeEntry(nutritionNames, "Sugar", 75f);
+
+        LayoutParams params = stackedBarChart.getLayoutParams();
+        params.height = 1800;
+        stackedBarChart.setLayoutParams(params);
+        Log.i(TAG,String.valueOf(params.height));
+
+
+        ArrayList<BarEntry> entries = barChartBuilder.getEntries();
+
         BarDataSet barDataSet = new BarDataSet(entries, "");
         barDataSet.setStackLabels(new String[]{
                 "% of Daily Value Consumed", "% of Daily Value Available", "Total % Consumed (Exceeded)"
@@ -124,21 +141,26 @@ public class HomeFragment extends Fragment {
         barDataSet.setAxisDependency(YAxis.AxisDependency.RIGHT);
 
         BarData data = new BarData(barDataSet);
-        data.setBarWidth(0.75f); // Width of Bars\
-        chart.setData(data);
+        data.setBarWidth(0.75f); // Width of Bars
+        stackedBarChart.setData(data);
 
-        chart.getXAxis().setLabelCount(entries.size());
+        stackedBarChart.getXAxis().setLabelCount(25);//.setLabelCount(entries.size());
 
         // Enable Vertical Scrolling
-        chart.setVisibleXRangeMaximum(8f);
-        chart.moveViewTo(0,chart.getAxisLeft().getAxisMaximum(), YAxis.AxisDependency.LEFT);
-        chart.invalidate();
+        //stackedBarChart.setVisibleXRangeMaximum(8f);
+        //stackedBarChart.moveViewTo(0,stackedBarChart.getAxisLeft().getAxisMaximum(), YAxis.AxisDependency.LEFT);
+
+        //barDataSet.notifyDataSetChanged();
+        //stackedBarChart.notifyDataSetChanged();
+        stackedBarChart.invalidate();
+
 
 
         PieChart pieChart = makePieChart(
-                view.findViewById(R.id.total_calorie_pie_chart),
+                view.findViewById(R.id.home_piechart),
                 2000.0,
                 567.0);
+
         pieChart.invalidate();
 
         return view;
@@ -166,10 +188,10 @@ public class HomeFragment extends Fragment {
         pieChart.setTransparentCircleRadius(85f);
 
         // Display Margins
-        pieChart.setExtraTopOffset(10f);
+        pieChart.setExtraTopOffset(20f);
         pieChart.setExtraBottomOffset(20f);
-        pieChart.setExtraLeftOffset(25f);
-        pieChart.setExtraRightOffset(25f);
+        pieChart.setExtraLeftOffset(30f);
+        pieChart.setExtraRightOffset(30f);
 
         pieChart.getLegend().setEnabled(false); // Disable Legend
         pieChart.setDescription(null); // Disable Description
@@ -189,10 +211,10 @@ public class HomeFragment extends Fragment {
 
         // Make Value Labels Outside Pie Chart
         pieDataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
-        pieDataSet.setValueLinePart1Length(0.1f);
-        pieDataSet.setValueLinePart2Length(0.5f);
+        pieDataSet.setValueLinePart1Length(0.3f);
+        pieDataSet.setValueLinePart2Length(0.1f);
         pieDataSet.setValueFormatter(new PercentFormatter());
-        pieDataSet.setValueTextSize(15f);
+        pieDataSet.setValueTextSize(17.5f);
         pieDataSet.setValueTextColor(Color.BLACK);
 
         if (totalCaloriesConsumed > totalCaloriesAvailable) {
