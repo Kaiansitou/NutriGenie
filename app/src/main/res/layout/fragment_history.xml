@@ -11,34 +11,61 @@
                 android:layout_width="match_parent"
                 android:layout_height="521dp"
                 tools:context="com.fruithat.nutrigenie.MainActivity">
+                <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true">
 
-                <EditText
-                        android:id="@+id/start"
-                        android:clickable="true"
-                        android:textSize="16dp"
-                        android:inputType = "none"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:focusable="false"
-                        android:text= "From"
-                        android:hint="12/01/2018"
-                        android:layout_alignParentTop="true" android:layout_alignParentStart="true"
-                        android:layout_marginStart="50dp"
-                android:layout_marginEnd="5dp"/>
-                <EditText
-                        android:id="@+id/end"
-                        android:clickable="true"
-                        android:inputType = "none"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:hint="12/31/2018"
-                        android:text = "To:"
-                        android:focusable="false"
-                        android:textSize="16dp"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginEnd="50dp"/>
+                        <TextView android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:text="From:"
+                                  android:layout_marginStart="30dp"
+                                  android:id="@+id/From"
+                        />
+                        <EditText
+                                android:id="@+id/start"
+                                android:clickable="true"
+                                android:textSize="16dp"
+                                android:inputType="none"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:focusable="false"
+                                android:hint="12/01/2018"
+                                android:layout_alignParentTop="true"
+                                android:layout_alignParentStart="true"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginEnd="5dp"/>
+
+                        <TextView android:layout_width="wrap_content"
+                                  android:id="@+id/To"
+                                  android:layout_height="wrap_content"
+                                  android:text="To:"
+                        />
+                        <EditText
+                                android:id="@+id/end"
+                                android:clickable="true"
+                                android:inputType="none"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:hint="12/31/2018"
+                                android:focusable="false"
+                                android:textSize="16dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_alignParentEnd="true"
+                                android:layout_marginStart="5dp"
+                                android:layout_marginEnd="50dp"/>
+
+                </LinearLayout>
+                <LinearLayout android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:layout_alignParentBottom="true">
+                        <TextView android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:id="@+id/errorMessage"
+                                  android:text=""/>
+                </LinearLayout>
+
 
         </RelativeLayout>
 

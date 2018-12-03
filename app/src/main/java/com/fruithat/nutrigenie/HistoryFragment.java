@@ -3,14 +3,17 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
@@ -23,6 +26,8 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 
 /**
@@ -32,6 +37,7 @@ public class HistoryFragment extends Fragment {
     private LineChart historyChart;
     private EditText startDate;
     private EditText endDate;
+    private TextView error;
     Calendar myCalendar = null;
     Calendar myCalendar2 = null;
     String myFormat = "MM/dd/yy";
@@ -43,7 +49,7 @@ public class HistoryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         historyChart = (LineChart) view.findViewById(R.id.chart);
-
+        error = view.findViewById(R.id.errorMessage);
         startDate = view.findViewById(R.id.start);
         endDate = view.findViewById(R.id.end);
 
@@ -115,7 +121,11 @@ public class HistoryFragment extends Fragment {
             }
         });
 
-        drawChart();
+        try {
+            drawChart();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -128,17 +138,26 @@ public class HistoryFragment extends Fragment {
         setRetainInstance(true);
     }
 
-    private void drawChart() {
+    private void drawChart() throws ParseException {
+        getData();
+        //Default past 7 Days
+        Date dayStart = new Date();
+        sdf.format(dayStart);
+        Calendar c = Calendar.getInstance();
+        c.setTime(dayStart);
+        c.add(Calendar.DATE, -7);
+        Date dayEnd = c.getTime();
+        sdf.format(dayEnd);
         historyChart.setBackgroundColor(Color.WHITE);
         historyChart.setDrawBorders(true);
         try {
-            Date dayStart = sdf.parse(startDate.toString());
-            Date dayEnd = sdf.parse(endDate.toString());
-        } catch (Exception e){
-
+             dayStart = sdf.parse(startDate.toString());
+             dayEnd = sdf.parse(endDate.toString());
+        } catch (ParseException e) {
+            error.setText("Please Select Valid Start and End Date!");
         }
 
-        /*
+
         ArrayList<String> xAxis = new ArrayList<>();
         ArrayList<Float> calories = new ArrayList<>();
         ArrayList<Float> calcium = new ArrayList<>();
@@ -148,16 +167,12 @@ public class HistoryFragment extends Fragment {
         ArrayList<Float> iron = new ArrayList<>();
         ArrayList<Float> protien = new ArrayList<>();
         ArrayList<Float> sugar = new ArrayList<>();
-        ArrayList<Float> transFat = new ArrayList<>();
-        ArrayList<Float> saturatedFat = new ArrayList<>();
+        ArrayList<Float> totalfat = new ArrayList<>();
 
-        try {
-            Date dayStart = sdf.parse("11/20/2019");
-            Date dayEnd = sdf.parse("11/27/2019");
-
-            NutritionHistory.getInstance().getNutritionInformation(new Date(0), new Date(), new NutritionHistoryCallback() {
+            NutritionHistory.getInstance().getNutritionInformation(dayStart, dayEnd, new NutritionHistoryCallback() {
                 @Override
                 public void onDataReceived(HashMap<Long, NutritionInformation> nutritionInformation) {
+                    Log.i("Here", "RECEVIED DATA");
                     for(Long day: nutritionInformation.keySet()) {
                         xAxis.add(sdf.format(new Date(day)).toString());
                         calories.add((float) nutritionInformation.get(day).getCalories());
@@ -168,124 +183,108 @@ public class HistoryFragment extends Fragment {
                         iron.add((float)nutritionInformation.get(day).getIron());
                         protien.add((float)nutritionInformation.get(day).getProtein());
                         sugar.add((float)nutritionInformation.get(day).getSugar());
-                        transFat.add((float)nutritionInformation.get(day).getTransFat());
-                        saturatedFat.add((float)nutritionInformation.get(day).getSaturatedFat());
+                        totalfat.add((float)nutritionInformation.get(day).getTotalFat());
                     }
 
                 }
             });
 
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-*/
-        ArrayList<Float> tempdata1 = new ArrayList<Float>();
-        tempdata1.add((float)38.1);
-        tempdata1.add((float)23.4);
-        tempdata1.add((float)39.1);
-        tempdata1.add((float)23.4);
-        tempdata1.add((float)39.5);
-        tempdata1.add((float)20.5);
-
-        ArrayList<Float> tempdata2 = new ArrayList<Float>();
-        tempdata2.add((float)39.5);
-        tempdata2.add((float)20.5);
-        tempdata2.add((float)19.5);
-        tempdata2.add((float)40.5);
-        tempdata2.add((float)12.1);
-        tempdata2.add((float)24.4);
-
-        LineDataSet dataCalories = addValues("Calories", tempdata1);
+        LineDataSet dataCalories = addValues("Calories", calories);
         dataCalories.setColor(Color.RED);
-        dataCalories.setDrawValues(false);
-       // dataCalories.setFormSize();
         dataCalories.setLineWidth(2f);
-        dataCalories.setCircleColor(Color.BLACK);
 
-
-        LineDataSet dataCalcium = addValues("Calcium",tempdata2);
+        LineDataSet dataCalcium = addValues("Calcium",calcium);
         dataCalcium.setColor(Color.rgb(181, 126	, 220));
-        dataCalcium.setDrawValues(false);
-        dataCalcium.setLineWidth(1.5f);
-        dataCalcium.setCircleColor(Color.BLACK);
+        dataCalcium.setLineWidth(2f);
 
-        LineDataSet dataSodium = addValues("Sodium", tempdata1);
+        LineDataSet dataSodium = addValues("Sodium", sodium);
         dataSodium.setColor(Color.BLUE);
-        dataSodium.setLineWidth(1.5f);
+        dataSodium.setLineWidth(2f);
 
-        LineDataSet dataCarbs = addValues("Carbohydrates",tempdata2);
+        LineDataSet dataCarbs = addValues("Carbohydrates",carbs);
         dataCarbs.setColor(Color.GREEN);
-        dataCarbs.setLineWidth(1.5f);
+        dataCarbs.setLineWidth(2f);
 
-        LineDataSet dataCholesterol = addValues("Cholesterol", tempdata1);
+        LineDataSet dataCholesterol = addValues("Cholesterol", cholestrol);
         dataCholesterol.setColor(Color.YELLOW);
+        dataCholesterol.setLineWidth(2f);
 
-        LineDataSet dataIron = addValues("Iron",tempdata2);
+        LineDataSet dataIron = addValues("Iron",iron);
         dataIron.setColor(Color.BLACK);
+        dataIron.setLineWidth(2f);
 
-        LineDataSet dataProtein = addValues("Protein", tempdata1);
+        LineDataSet dataProtein = addValues("Protein", protien);
         dataProtein.setColor(Color.CYAN);
+        dataProtein.setLineWidth(2f);
 
-        LineDataSet dataSugar = addValues("Sugar",tempdata2);
+        LineDataSet dataSugar = addValues("Sugar",sugar);
         dataSugar.setColor(Color.MAGENTA);
-/*
-        LineDataSet dataTransFat = addValues("TransFat", tempdata1);
-        dataTransFat.setColor(Color.rgb(64, 130, 109));
-*/
-        LineDataSet dataTotalFat = addValues("Total Fat", tempdata2);
+        dataSugar.setLineWidth(2f);
+
+        LineDataSet dataTotalFat = addValues("Total Fat", totalfat);
         dataTotalFat.setColor(Color.rgb(248	,131, 121));
+        dataTotalFat.setLineWidth(2f);
 
         LineData lineData = new LineData(dataCalories, dataCalcium ,dataSodium, dataCarbs, dataIron, dataSugar, dataProtein, dataTotalFat, dataCholesterol);
         historyChart.setData(lineData);
 
-       ArrayList<String> xAxis = new ArrayList<>();
-        xAxis.add("10/11");
-        xAxis.add("10/12");
-        xAxis.add("10/13");
-        xAxis.add("10/14");
-        xAxis.add("10/15");
-        xAxis.add("10/16");
-        /*
-        for(int i = 0; i < tempdata1.length/7; i++) {
-            xAxis.add("Mon");
-            xAxis.add("Tues");
-            xAxis.add("Wed");
-            xAxis.add("Thur");
-            xAxis.add("Fri");
-            xAxis.add("Sun");
-            xAxis.add("Sat");
-        }*/
-
         historyChart.getXAxis().setDrawAxisLine(true);
       //  historyChart.setVisibleXRange(0, xAxis.size());
-
         historyChart.getXAxis().setValueFormatter(new MyXAxisValueFormatter(xAxis));
         historyChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
         historyChart.enableScroll();
         historyChart.getDescription().setEnabled(false);
         historyChart.getXAxis().setLabelCount(xAxis.size(), true);
         historyChart.setExtraBottomOffset(20f);
-      //  historyChart.setPadding(5, 5, 5, 200);
         Legend l = historyChart.getLegend();
         l.setEnabled(true);
         l.setDrawInside(false);
         l.setWordWrapEnabled(true);
         l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
-    //   l.setOrientation(Legend.LegendOrientation.VERTICAL);
-         l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
-         l.setFormSize(15f);
-         l.setXOffset(5f);
-         l.setYOffset(10f);
-         l.setXEntrySpace(7f);
-         l.setFormLineWidth(2f);
+        l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+        l.setFormSize(15f);
+        l.setXOffset(5f);
+        l.setYOffset(10f);
+        l.setXEntrySpace(7f);
+        l.setFormLineWidth(2f);
+        l.setForm(Legend.LegendForm.CIRCLE);
+        l.setYEntrySpace(5f);
+        l.setTextSize(10f);
+        l.setStackSpace(5f);
 
-         l.setForm(Legend.LegendForm.CIRCLE);
-         l.setYEntrySpace(5f);
-         l.setTextSize(10f);
-         l.setStackSpace(5f);
         historyChart.animateX(3000);
-
         historyChart.invalidate();
+    }
+    private void getData() throws ParseException {
+        String date = new SimpleDateFormat("MM/dd/yy", Locale.getDefault()).format(new Date());
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yy");
+        Date startTime = sdf.parse(date + " 00:00:00");
+        Date endTime = sdf.parse(date + " 23:59:59");
+
+        NutritionHistory instance = NutritionHistory.getInstance();
+        NutritionInformation.NutritionInformationBuilder nb = new NutritionInformation.NutritionInformationBuilder()
+         .calories(1.0)
+                .calcium(5.2)
+          .sodium(2.9)
+                .carbohydrates(2.9)
+        .cholesterol(20)
+        .iron(3.9)
+        .protein(4.9)
+         .sugar(9.5)
+      .totalFat(9.4);
+        NutritionInformation n = nb.build();
+
+        NutritionInformation.NutritionInformationBuilder nb2 = new NutritionInformation.NutritionInformationBuilder()
+                .calories(5.0)
+                .calcium(5.2)
+                .sodium(9.9)
+                .carbohydrates(6.9)
+                .cholesterol(5)
+                .iron(7.9)
+                .protein(9.9)
+                .sugar(2.5)
+                .totalFat(6.4);
+        NutritionInformation n2 = nb.build();
     }
 
     private LineDataSet addValues(String label, ArrayList<Float> data) {
@@ -293,26 +292,8 @@ public class HistoryFragment extends Fragment {
         for(int i = 0; i < data.size(); i++) {
             entries.add(new Entry((float)i, data.get(i)));
         }
-
         LineDataSet dataSet = new LineDataSet(entries, label); //later enable legend, set color
         return dataSet;
-
-    }
-    private ArrayList<String> setAxis(ArrayList<String> xAxis) {
-
-        xAxis.add("JAN");
-        xAxis.add("FEB");
-        xAxis.add("MAR");
-        xAxis.add("APIRL");
-        xAxis.add("MAY");
-        xAxis.add("JUNE");
-        xAxis.add("JULY");
-        xAxis.add("AUG");
-        xAxis.add("SEPT");
-        xAxis.add("OCT");
-        xAxis.add("NOV");
-        xAxis.add("DEC");
-        return xAxis;
 
     }
 
