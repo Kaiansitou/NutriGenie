@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
@@ -30,7 +31,8 @@ import java.util.List;
  */
 public class HistoryFragment extends Fragment {
     private LineChart historyChart;
-
+    private EditText startDate;
+    private EditText endDate;
     public HistoryFragment() {
         // Required empty public constructor
     }
@@ -38,6 +40,8 @@ public class HistoryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         historyChart = (LineChart) view.findViewById(R.id.chart);
+        startDate = view.findViewById(R.id.start);
+        endDate = view.findViewById(R.id.end);
         drawChart();
     }
 
@@ -55,7 +59,17 @@ public class HistoryFragment extends Fragment {
         historyChart.setBackgroundColor(Color.WHITE);
         historyChart.setDrawBorders(true);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd"); // here set the pattern as you date in string was containing like date/month/year
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy"); // here set the pattern as you date in string was containing like date/month/year
+        try {
+            String start = startDate.getText().toString();
+            String end = startDate.getText().toString();
+            Date dayStart = sdf.parse(start);
+            Date dayEnd = sdf.parse(end);
+
+        } catch (ParseException e) {
+        }
+      //
+
         /*
         ArrayList<String> xAxis = new ArrayList<>();
         ArrayList<Float> calories = new ArrayList<>();
@@ -153,8 +167,7 @@ public class HistoryFragment extends Fragment {
         LineDataSet dataTotalFat = addValues("Total Fat", tempdata2);
         dataTotalFat.setColor(Color.rgb(248	,131, 121));
 
-        LineData lineData = new LineData(dataCalories, dataCalcium ,dataSodium, dataCarbs, dataIron, dataCholesterol, dataProtein, dataTotalFat,
-                dataSugar);
+        LineData lineData = new LineData(dataCalories, dataCalcium ,dataSodium, dataCarbs, dataIron, dataSugar, dataProtein, dataTotalFat, dataCholesterol);
         historyChart.setData(lineData);
 
        ArrayList<String> xAxis = new ArrayList<>();
@@ -195,12 +208,14 @@ public class HistoryFragment extends Fragment {
          l.setFormSize(15f);
          l.setXOffset(5f);
          l.setYOffset(10f);
-         l.setXEntrySpace(5f);
+         l.setXEntrySpace(7f);
          l.setFormLineWidth(2f);
          l.setForm(Legend.LegendForm.CIRCLE);
          l.setYEntrySpace(5f);
          l.setTextSize(20f);
          l.setStackSpace(5f);
+        historyChart.animateX(3000);
+
         historyChart.invalidate();
     }
 
