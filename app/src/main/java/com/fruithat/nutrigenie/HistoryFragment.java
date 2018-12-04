@@ -78,6 +78,7 @@ public class HistoryFragment extends Fragment {
                 if(myCalendar != null) {
                     myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                     myCalendar.set(Calendar.HOUR_OF_DAY, 0);
+                    myCalendar.set(Calendar.MONTH, monthOfYear);
                     myCalendar.set(Calendar.MINUTE, 0);
                     myCalendar.set(Calendar.SECOND, 0);
                     myCalendar.set(Calendar.MILLISECOND, 0);
@@ -92,6 +93,7 @@ public class HistoryFragment extends Fragment {
                     myCalendar2.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                     myCalendar2.set(Calendar.HOUR_OF_DAY, 0);
                     myCalendar2.set(Calendar.MINUTE, 0);
+                    myCalendar2.set(Calendar.MONTH, monthOfYear);
                     myCalendar2.set(Calendar.SECOND, 0);
                     myCalendar2.set(Calendar.MILLISECOND, 0);
                     myCalendar2.set(Calendar.YEAR, year);
@@ -155,7 +157,7 @@ public class HistoryFragment extends Fragment {
         //Default past 7 Days
         Calendar cal = new GregorianCalendar();
         cal.setTime(new Date());
-        cal.set(Calendar.DAY_OF_MONTH, -5);
+        cal.set(Calendar.DAY_OF_MONTH, -4);
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
@@ -277,8 +279,8 @@ public class HistoryFragment extends Fragment {
         l.setWordWrapEnabled(true);
         l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
-        l.setFormSize(15f);
-        l.setXOffset(5f);
+        l.setFormSize(10f);
+        l.setXOffset(3f);
         l.setYOffset(10f);
         l.setXEntrySpace(7f);
         l.setFormLineWidth(2f);
