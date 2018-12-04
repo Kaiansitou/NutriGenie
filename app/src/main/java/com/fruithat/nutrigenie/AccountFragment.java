@@ -1,5 +1,6 @@
 package com.fruithat.nutrigenie;
 
+import android.accounts.Account;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -13,6 +14,7 @@ import android.widget.*;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.*;
+import android.content.Intent;
 
 import java.util.HashMap;
 

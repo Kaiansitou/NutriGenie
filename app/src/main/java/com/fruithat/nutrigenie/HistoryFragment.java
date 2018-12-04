@@ -44,18 +44,10 @@ public class HistoryFragment extends Fragment {
     private TextView error;
     Calendar myCalendar = null;
     Calendar myCalendar2 = null;
-    String myFormat = "MM/dd/yy";
+    String myFormat = "MM/dd";
     Date startDateFinal = null;
     Date endDateFinal = null;
-    float caloriesF = 0;
-    float calciumF = 0;
-    float sodiumF = 0;
-    float carbsF = 0;
-    float cholestrolF = 0;
-    float ironF = 0;
-    float protienF = 0;
-    float sugarF = 0;
-    float totalFatF = 0;
+
     SimpleDateFormat sdf2 = new SimpleDateFormat(myFormat, Locale.US);
     public HistoryFragment() {
         // Required empty public constructor
@@ -64,7 +56,7 @@ public class HistoryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         historyChart = (LineChart) view.findViewById(R.id.chart);
-        error = view.findViewById(R.id.errorMessage);
+       /* error = view.findViewById(R.id.errorMessage);
         startDate = view.findViewById(R.id.start);
         endDate = view.findViewById(R.id.end);
 
@@ -76,6 +68,7 @@ public class HistoryFragment extends Fragment {
                 // TODO Auto-generated method stub
 
                 if(myCalendar != null) {
+                    myCalendar.set(Calendar.MONTH, monthOfYear);
                     myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                     myCalendar.set(Calendar.HOUR_OF_DAY, 0);
                     myCalendar.set(Calendar.MINUTE, 0);
@@ -89,6 +82,7 @@ public class HistoryFragment extends Fragment {
 
                 }
                 if(myCalendar2 != null){
+                    myCalendar2.set(Calendar.MONTH, monthOfYear);
                     myCalendar2.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                     myCalendar2.set(Calendar.HOUR_OF_DAY, 0);
                     myCalendar2.set(Calendar.MINUTE, 0);
@@ -132,7 +126,7 @@ public class HistoryFragment extends Fragment {
                 secDate.show();
             }
         });
-
+*/
         try {
             drawChart();
         } catch (ParseException e) {
@@ -155,22 +149,13 @@ public class HistoryFragment extends Fragment {
         //Default past 7 Days
         Calendar cal = new GregorianCalendar();
         cal.setTime(new Date());
-        cal.set(Calendar.DAY_OF_MONTH, -5);
+        cal.set(Calendar.DAY_OF_MONTH, -7);
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
         Date startTime = cal.getTime();
         Date dayEnd = new Date();
-
-        if(startDateFinal != null && endDateFinal != null) {
-            Log.i("HERE", "ADDED FK");
-            startTime = startDateFinal;
-            dayEnd = endDateFinal;
-            Log.i("HERE", startDateFinal.toString());
-            Log.i("HERE", endDateFinal.toString());
-        }
-
 
         historyChart.setBackgroundColor(Color.WHITE);
         historyChart.setDrawBorders(true);
@@ -254,7 +239,7 @@ public class HistoryFragment extends Fragment {
                     historyChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
                     historyChart.enableScroll();
                     historyChart.getDescription().setEnabled(false);
-                    historyChart.getXAxis().setLabelCount(5, true);
+                    historyChart.getXAxis().setLabelCount(7, true);
                     historyChart.setExtraBottomOffset(20f);
                 }
 
@@ -277,10 +262,10 @@ public class HistoryFragment extends Fragment {
         l.setWordWrapEnabled(true);
         l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
-        l.setFormSize(15f);
+        l.setFormSize(10f);
         l.setXOffset(5f);
-        l.setYOffset(10f);
-        l.setXEntrySpace(7f);
+        l.setYOffset(5f);
+        l.setXEntrySpace(5f);
         l.setFormLineWidth(2f);
         l.setForm(Legend.LegendForm.CIRCLE);
         l.setYEntrySpace(5f);
