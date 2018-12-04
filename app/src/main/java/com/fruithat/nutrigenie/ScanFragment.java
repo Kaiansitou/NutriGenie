@@ -52,9 +52,6 @@ public class ScanFragment extends Fragment {
     // Needed so that startStatisticsActivity can reliably have access to this activity
     private FragmentActivity activity;
 
-    private Button testScanButton;
-    private Bitmap bitmap;
-
     private static final String TAG = "NutriGenie";
 
     @Override
