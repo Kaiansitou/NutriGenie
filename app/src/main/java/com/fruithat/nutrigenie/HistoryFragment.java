@@ -76,6 +76,7 @@ public class HistoryFragment extends Fragment {
                 // TODO Auto-generated method stub
 
                 if(myCalendar != null) {
+                    myCalendar.set(Calendar.MONTH, monthOfYear);
                     myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                     myCalendar.set(Calendar.HOUR_OF_DAY, 0);
                     myCalendar.set(Calendar.MINUTE, 0);
@@ -89,6 +90,7 @@ public class HistoryFragment extends Fragment {
 
                 }
                 if(myCalendar2 != null){
+                    myCalendar2.set(Calendar.MONTH, monthOfYear);
                     myCalendar2.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                     myCalendar2.set(Calendar.HOUR_OF_DAY, 0);
                     myCalendar2.set(Calendar.MINUTE, 0);

@@ -109,7 +109,7 @@ public class BarChartBuilder {
         chart.setScaleEnabled(false);
         chart.setFitBars(true);
         chart.setDrawGridBackground(false); // No Grid Lines
-        chart.animateY(2500); // Bars Animate on Start
+        chart.animateY(500); // Bars Animate on Start
 
         // Add Spacing Top & Bottom
         chart.setExtraTopOffset(10f);
