@@ -45,6 +45,8 @@ public class HistoryFragment extends Fragment {
     Calendar myCalendar = null;
     Calendar myCalendar2 = null;
     String myFormat = "MM/dd/yy";
+    Date startDateFinal = null;
+    Date endDateFinal = null;
     float caloriesF = 0;
     float calciumF = 0;
     float sodiumF = 0;
@@ -74,19 +76,34 @@ public class HistoryFragment extends Fragment {
                 // TODO Auto-generated method stub
 
                 if(myCalendar != null) {
+                    myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                    myCalendar.set(Calendar.HOUR_OF_DAY, 0);
+                    myCalendar.set(Calendar.MINUTE, 0);
+                    myCalendar.set(Calendar.SECOND, 0);
+                    myCalendar.set(Calendar.MILLISECOND, 0);
                     myCalendar.set(Calendar.YEAR, year);
                     myCalendar.set(Calendar.MONTH, monthOfYear);
-                    myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                    startDateFinal = myCalendar.getTime();
                     startDate.setText(sdf2.format(myCalendar.getTime()));
                     myCalendar = null;
 
                 }
                 if(myCalendar2 != null){
+                    myCalendar2.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                    myCalendar2.set(Calendar.HOUR_OF_DAY, 0);
+                    myCalendar2.set(Calendar.MINUTE, 0);
+                    myCalendar2.set(Calendar.SECOND, 0);
+                    myCalendar2.set(Calendar.MILLISECOND, 0);
                     myCalendar2.set(Calendar.YEAR, year);
                     myCalendar2.set(Calendar.MONTH, monthOfYear);
-                    myCalendar2.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                    endDateFinal = myCalendar2.getTime();
                     endDate.setText(sdf2.format(myCalendar2.getTime()));
                     myCalendar2 = null;
+                    try {
+                        drawChart();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
 
                 }
             //    startDate.setText(sdf.format(myCalendar.getTime()));
@@ -154,26 +171,24 @@ public class HistoryFragment extends Fragment {
     private void drawChart() throws ParseException {
         // String date = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()).format(new Date());
         //Default past 7 Days
-        String myFormat = "MM/dd/yy hh:m:ss";
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-        String dayStart = sdf.format(new Date());
-        Date startTime = sdf.parse(dayStart + " 00:00:00");
+        Calendar cal = new GregorianCalendar();
+        cal.setTime(new Date());
+        cal.set(Calendar.DAY_OF_MONTH, -5);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        Date startTime = cal.getTime();
+        Date dayEnd = new Date();
 
-        Calendar c = Calendar.getInstance();
-        c.setTime(startTime);
-        c.add(Calendar.DATE, -7);
-        Date dayEnd = c.getTime();
-        sdf.format(dayEnd);
-        Log.i("HERE", dayEnd.toString());
+        if(startDateFinal != null && endDateFinal != null) {
+            Log.i("HERE", "ADDED FK");
+            startTime = startDateFinal;
+            dayEnd = endDateFinal;
+        }
         historyChart.setBackgroundColor(Color.WHITE);
         historyChart.setDrawBorders(true);
 
-        try {
-            startTime = sdf.parse(startDate.toString());
-            dayEnd = sdf.parse(endDate.toString());
-        } catch (ParseException e) {
-            error.setText("Please Select Valid Start and End Date!");
-        }
 
         ArrayList<String> xAxis = new ArrayList<>();
         ArrayList<Float> calories = new ArrayList<>();
@@ -187,7 +202,7 @@ public class HistoryFragment extends Fragment {
         ArrayList<Float> totalfat = new ArrayList<>();
 
         NutritionHistory instance = NutritionHistory.getInstance();
-        NutritionInformation.NutritionInformationBuilder nb = new NutritionInformation.NutritionInformationBuilder()
+       /* NutritionInformation.NutritionInformationBuilder nb = new NutritionInformation.NutritionInformationBuilder()
                 .calcium(1.0)
                 .calories(100)
                 .cholesterol(10)
@@ -199,16 +214,10 @@ public class HistoryFragment extends Fragment {
                 .protein(20);
 
         NutritionInformation n = nb.build();
-        instance.addNutritionInformation("Apple",n);
-        Calendar cal = new GregorianCalendar();
-        cal.setTime(new Date());
-        cal.set(Calendar.DAY_OF_MONTH, -5);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
+        instance.addNutritionInformation("Apple",n); */
 
-        NutritionHistory.getInstance().getNutritionInformation(cal.getTime(), new Date(), nutritionInformation -> {
+
+        NutritionHistory.getInstance().getNutritionInformation(startTime, dayEnd, nutritionInformation -> {
             DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
             FirebaseUser mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
             mDatabase.child("account").child(mCurrentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -292,15 +301,13 @@ public class HistoryFragment extends Fragment {
                     LineData lineData = new LineData(dataCalories, dataCalcium ,dataSodium, dataCarbs, dataIron, dataSugar, dataProtein, dataTotalFat, dataCholesterol);
                     historyChart.setData(lineData);
                     historyChart.getXAxis().setDrawAxisLine(true);
-                    //  historyChart.setVisibleXRange(0, xAxis.size());
+                    historyChart.setVisibleXRange(0, xAxis.size() - 1);
                     historyChart.getXAxis().setValueFormatter(new MyXAxisValueFormatter(xAxis));
                     historyChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
                     historyChart.enableScroll();
                     historyChart.getDescription().setEnabled(false);
-                    historyChart.getXAxis().setLabelCount(xAxis.size(), true);
+                    historyChart.getXAxis().setLabelCount(5, true);
                     historyChart.setExtraBottomOffset(20f);
-
-
                 }
 
                 @Override
@@ -312,37 +319,6 @@ public class HistoryFragment extends Fragment {
 
         designChart(xAxis);
         historyChart.invalidate();
-    }
-
-    private void getData() throws ParseException {
-
-        NutritionHistory instance = NutritionHistory.getInstance();
-        NutritionInformation.NutritionInformationBuilder nb = new NutritionInformation.NutritionInformationBuilder()
-         .calories(1.0)
-                .calcium(5.2)
-          .sodium(2.9)
-                .carbohydrates(2.9)
-        .cholesterol(20)
-          .iron(3.9)
-          .protein(4.9)
-         .sugar(9.5)
-         .totalFat(9.4);
-        NutritionInformation n = nb.build();
-
-        NutritionInformation.NutritionInformationBuilder nb2 = new NutritionInformation.NutritionInformationBuilder()
-                .calories(5.0)
-                .calcium(5.2)
-                .sodium(9.9)
-                .carbohydrates(6.9)
-                .cholesterol(5)
-                .iron(7.9)
-                .protein(9.9)
-                .sugar(2.5)
-                .totalFat(6.4);
-        NutritionInformation n2 = nb.build();
-        instance.addNutritionInformation("Apple",n);
-        instance.addNutritionInformation("Orange",n2);
-
     }
 
     public void designChart(ArrayList<String> xAxis) {
