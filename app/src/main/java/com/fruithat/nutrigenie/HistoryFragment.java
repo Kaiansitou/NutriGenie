@@ -82,7 +82,7 @@ public class HistoryFragment extends Fragment {
                     myCalendar.set(Calendar.SECOND, 0);
                     myCalendar.set(Calendar.MILLISECOND, 0);
                     myCalendar.set(Calendar.YEAR, year);
-                    myCalendar.set(Calendar.MONTH, monthOfYear);
+
                     startDateFinal = myCalendar.getTime();
                     startDate.setText(sdf2.format(myCalendar.getTime()));
                     myCalendar = null;
@@ -95,7 +95,6 @@ public class HistoryFragment extends Fragment {
                     myCalendar2.set(Calendar.SECOND, 0);
                     myCalendar2.set(Calendar.MILLISECOND, 0);
                     myCalendar2.set(Calendar.YEAR, year);
-                    myCalendar2.set(Calendar.MONTH, monthOfYear);
                     endDateFinal = myCalendar2.getTime();
                     endDate.setText(sdf2.format(myCalendar2.getTime()));
                     myCalendar2 = null;
@@ -106,26 +105,9 @@ public class HistoryFragment extends Fragment {
                     }
 
                 }
-            //    startDate.setText(sdf.format(myCalendar.getTime()));
             }
 
         };
-
-        /*DatePickerDialog.OnDateSetListener date2 = new DatePickerDialog.OnDateSetListener() {
-
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear,
-                                  int dayOfMonth) {
-                // TODO Auto-generated method stub
-
-                myCalendar2.set(Calendar.YEAR, year);
-                myCalendar2.set(Calendar.MONTH, monthOfYear);
-                myCalendar2.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-            }
-
-        }; */
-
-
 
         startDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -185,7 +167,11 @@ public class HistoryFragment extends Fragment {
             Log.i("HERE", "ADDED FK");
             startTime = startDateFinal;
             dayEnd = endDateFinal;
+            Log.i("HERE", startDateFinal.toString());
+            Log.i("HERE", endDateFinal.toString());
         }
+
+
         historyChart.setBackgroundColor(Color.WHITE);
         historyChart.setDrawBorders(true);
 
@@ -202,21 +188,6 @@ public class HistoryFragment extends Fragment {
         ArrayList<Float> totalfat = new ArrayList<>();
 
         NutritionHistory instance = NutritionHistory.getInstance();
-       /* NutritionInformation.NutritionInformationBuilder nb = new NutritionInformation.NutritionInformationBuilder()
-                .calcium(1.0)
-                .calories(100)
-                .cholesterol(10)
-                .carbohydrates(8.0)
-                .iron(1.0)
-                .sodium(1.0)
-                .totalFat(1)
-                .sugar(14)
-                .protein(20);
-
-        NutritionInformation n = nb.build();
-        instance.addNutritionInformation("Apple",n); */
-
-
         NutritionHistory.getInstance().getNutritionInformation(startTime, dayEnd, nutritionInformation -> {
             DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
             FirebaseUser mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -225,30 +196,7 @@ public class HistoryFragment extends Fragment {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     NutritionInformation.NutritionInformationBuilder builder = new NutritionInformation.NutritionInformationBuilder();
                     NutritionInformation current = builder.build();
-/*
-                    for(Long day: nutritionInformation.keySet()) {
-                       caloriesF += (float) nutritionInformation.get(day).getCalories();
-                       calciumF += (float) nutritionInformation.get(day).getCalcium();
-                       sodiumF += (float)nutritionInformation.get(day).getSodium();
-                       carbsF += (float)nutritionInformation.get(day).getCarbohydrates();
-                       cholestrolF += (float)nutritionInformation.get(day).getCholesterol();
-                       ironF += (float)nutritionInformation.get(day).getIron();
-                       protienF += (float)nutritionInformation.get(day).getProtein();
-                       sugarF += (float)nutritionInformation.get(day).getSugar();
-                       totalFatF += (float)nutritionInformation.get(day).getTotalFat();
-                    }
-                    for(Long day: nutritionInformation.keySet()) {
-                        xAxis.add(sdf2.format(new Date(day)).toString());
-                        calories.add(calciumF);
-                        calcium.add(calciumF);
-                        sodium.add(sodiumF);
-                        carbs.add(carbsF);
-                        cholestrol.add(cholestrolF);
-                        iron.add(ironF);
-                        protien.add(protienF);
-                        sugar.add(sugarF);
-                        totalfat.add(totalFatF);
-                    }*/
+
                     for(Long day: nutritionInformation.keySet()) {
                         xAxis.add(sdf2.format(new Date(day)).toString());
                         calories.add( (float) nutritionInformation.get(day).getCalories());
