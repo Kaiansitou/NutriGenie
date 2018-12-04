@@ -179,6 +179,17 @@ public class HistoryFragment extends Fragment {
             mDatabase.child("account").child(mCurrentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    double caloriesNeeded = 2000L;
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        switch (data.getKey()) {
+                            case "calories":
+                                caloriesNeeded = Double.parseDouble(String.valueOf(data.getValue()));
+                        }
+                    }
+
+                    NutrientConverter converter = new NutrientConverter(caloriesNeeded);
+
                     NutritionInformation.NutritionInformationBuilder builder = new NutritionInformation.NutritionInformationBuilder();
                     NutritionInformation current = builder.build();
 
@@ -187,15 +198,15 @@ public class HistoryFragment extends Fragment {
 
                     for(Long day: days) {
                         xAxis.add(sdf2.format(new Date(day)).toString());
-                        calories.add( (float) nutritionInformation.get(day).getCalories());
-                        calcium.add((float) nutritionInformation.get(day).getCalcium());
-                        sodium.add((float)nutritionInformation.get(day).getSodium());
-                        carbs.add((float) nutritionInformation.get(day).getCarbohydrates());
-                        cholestrol.add((float)nutritionInformation.get(day).getCholesterol());
-                        iron.add((float)nutritionInformation.get(day).getIron());
-                        protien.add((float)nutritionInformation.get(day).getProtein());
-                        sugar.add((float)nutritionInformation.get(day).getSugar());
-                        totalfat.add((float)nutritionInformation.get(day).getTotalFat());
+                        calories.add(converter.convert("Calories", (float) nutritionInformation.get(day).getCalories()));
+                        calcium.add(converter.convert("Calcium", (float) nutritionInformation.get(day).getCalcium()));
+                        sodium.add(converter.convert("Sodium", (float)nutritionInformation.get(day).getSodium()));
+                        carbs.add(converter.convert("Carbohydrates", (float) nutritionInformation.get(day).getCarbohydrates()));
+                        cholestrol.add(converter.convert("Cholesterol", (float)nutritionInformation.get(day).getCholesterol()));
+                        iron.add(converter.convert("Iron", (float)nutritionInformation.get(day).getIron()));
+                        protien.add(converter.convert("Protein", (float)nutritionInformation.get(day).getProtein()));
+                        sugar.add(converter.convert("Sugar", (float)nutritionInformation.get(day).getSugar()));
+                        totalfat.add(converter.convert("Total Fat", (float)nutritionInformation.get(day).getTotalFat()));
                     }
                     Log.i("HERE", xAxis.toString());
                     LineDataSet dataCalories = addValues("Calories", calories);
@@ -279,7 +290,7 @@ public class HistoryFragment extends Fragment {
         historyChart.getAxisLeft().setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
-                return (float) value + "g"; // yVal is a string array
+                return (float) value + "%"; // yVal is a string array
             }
         });
 
