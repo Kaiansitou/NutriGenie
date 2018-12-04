@@ -32,6 +32,10 @@ public class NutrientConverter {
                 return (float) (amount / (caloriesNeeded / 2000 * 3500)) * 100;
             case "Calories":
                 return (float) (amount / caloriesNeeded) * 100;
+            case "Iron":
+                return (float) (amount / (caloriesNeeded/2000 * 20)) * 100;
+            case "Calcium":
+                return (float) (amount / (caloriesNeeded/2000 * 1000)) * 100;
             default: return -1;
         }
     }
