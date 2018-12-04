@@ -82,15 +82,7 @@ public class ScanFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // dispatchTakePictureIntent();
-        testScanButton = getActivity().findViewById(R.id.test_scan_button);
-        testScanButton.setOnClickListener(new Button.OnClickListener(){
-            public void onClick(View v) {
-                bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.nutrition_label_large);
-                image = FirebaseVisionImage.fromBitmap(bitmap);
-                processLabel();
-            }
-        });
+         dispatchTakePictureIntent();
     }
 
     @Override
