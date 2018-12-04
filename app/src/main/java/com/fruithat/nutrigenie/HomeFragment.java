@@ -129,11 +129,14 @@ public class HomeFragment extends Fragment {
                     barChartBuilder.changeEntry(nutritionNames, "Saturated Fat", converter.convert("Saturated Fat", (float) current.getPotassium()));
                     barChartBuilder.changeEntry(nutritionNames, "Total Fat", converter.convert("Total Fat", (float) current.getPotassium()));
 
+                    stackedBarChart.invalidate();
                     PieChart pieChart = makePieChart(
                             view.findViewById(R.id.home_piechart),
                             caloriesNeeded,
                             current.getCalories());
                     pieChart.invalidate();
+                    view.findViewById(R.id.home_scroll_view).setVisibility(View.VISIBLE);
+
                 }
 
                 @Override
@@ -142,7 +145,7 @@ public class HomeFragment extends Fragment {
                 }
             });
         });
-
+        barChartBuilder.changeEntry(nutritionNames,"Sugar",20f);
         ArrayList<BarEntry> entries = barChartBuilder.getEntries();
         LayoutParams params = stackedBarChart.getLayoutParams();
         params.height = 200 * entries.size();
@@ -162,7 +165,7 @@ public class HomeFragment extends Fragment {
 
         stackedBarChart.getXAxis().setLabelCount(entries.size());
         stackedBarChart.invalidate();
-        
+
         return view;
     }
 
