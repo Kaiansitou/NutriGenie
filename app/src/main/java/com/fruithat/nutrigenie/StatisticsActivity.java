@@ -97,6 +97,7 @@ public class StatisticsActivity extends AppCompatActivity {
                names.add("Sodium");
                names.add("Cholesterol");
                names.add("Total Fat");
+               names.add("Calories");
 
                String[] nutritionNames = names.stream().toArray(String[]::new);
                HorizontalBarChart stackedBarChart = findViewById(R.id.statistics_horizontal_stacked_barchart);
@@ -105,6 +106,13 @@ public class StatisticsActivity extends AppCompatActivity {
                BarChartBuilder barChartBuilder = new BarChartBuilder(stackedBarChart);
                barChartBuilder.changePreferences(nutritionNames);
                float percent;
+               try {
+                   percent = nc.convert("Calories", (float)ni.getCalories());
+                   barChartBuilder.changeEntry(nutritionNames, "Calories", percent);
+               } catch (NullPointerException e) {
+                   Log.e(TAG, e.getMessage());
+               }
+
                try {
                    percent = nc.convert("Sugar", (float)ni.getSugar());
                    barChartBuilder.changeEntry(nutritionNames, "Sugar", percent);

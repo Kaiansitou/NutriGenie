@@ -30,6 +30,8 @@ public class NutrientConverter {
                 return (float) (amount / (caloriesNeeded / 2000 * 300)) * 100;
             case "Potassium":
                 return (float) (amount / (caloriesNeeded / 2000 * 3500)) * 100;
+            case "Calories":
+                return (float) (amount / caloriesNeeded) * 100;
             default: return -1;
         }
     }
