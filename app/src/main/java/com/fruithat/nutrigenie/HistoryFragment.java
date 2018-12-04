@@ -265,8 +265,8 @@ public class HistoryFragment extends Fragment {
         l.setWordWrapEnabled(true);
         l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
-        l.setFormSize(10f);
-        l.setXOffset(5f);
+        l.setFormSize(7f);
+        l.setXOffset(3f);
         l.setYOffset(5f);
         l.setXEntrySpace(5f);
         l.setFormLineWidth(2f);
