@@ -145,7 +145,7 @@ public class HomeFragment extends Fragment {
                 }
             });
         });
-        barChartBuilder.changeEntry(nutritionNames,"Sugar",20f);
+
         ArrayList<BarEntry> entries = barChartBuilder.getEntries();
         LayoutParams params = stackedBarChart.getLayoutParams();
         params.height = 200 * entries.size();
