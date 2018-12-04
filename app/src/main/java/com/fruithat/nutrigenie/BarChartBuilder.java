@@ -63,6 +63,7 @@ public class BarChartBuilder {
     public ArrayList<BarEntry> getEntries() {
         return entries;
     }
+
     public void changeEntry(String[] preferences, String nutritionName, float value) {
         for (int i = 0; i < preferences.length; i++) {
             if (preferences[i] == nutritionName) {
@@ -70,21 +71,14 @@ public class BarChartBuilder {
                 float x = dataEntry.getX();
                 float[] y = dataEntry.getYVals();
                 float y0 = y[0] + value;
-                float y1 = y[1] - value;
-                float y2 = y[2];
+                float y1 = y[1];
+
                 if (y0 > 100) {
-                    y2 = y0;
+                    y1 = y0;
                     y0 = 0f;
-                    y1 = 0f;
-                } else if (y[0] == 0 && y[1] == 0) {
-                    y2 += value;
-                    y0 = 0;
-                    y1 = 0;
                 }
                 entries.remove(i);
-                entries.add(i,new BarEntry(x, new float[]{y0, y1, y2}));
-
-                //Log.i("entries", String.valueOf(y0) + "/" + String.valueOf(y1) + "/" + String.valueOf(y2));
+                entries.add(i,new BarEntry(x, new float[]{y0, y1}));
                 break;
             }
         }
@@ -93,12 +87,9 @@ public class BarChartBuilder {
     private void addInitialEntries(String[] allNutritionNames) {
 
         for (int i = 0; i < allNutritionNames.length; i++) {
-            entries.add(new BarEntry((float)i,new float[]{0f,100f,0f}));
+            entries.add(new BarEntry((float) i, new float[]{0f, 0f}));
             labels.add(allNutritionNames[i]);
         }
-        Log.i("data_bar", "names: "+String.valueOf(allNutritionNames.length));
-        Log.i("data_bar", "labels: "+String.valueOf(labels.size()));
-        Log.i("data_bar", "entries: "+String.valueOf(entries.size()));
     }
 
     public void changePreferences(String[] preferences) {
@@ -121,7 +112,7 @@ public class BarChartBuilder {
 
         // Add Spacing Top & Bottom
         chart.setExtraTopOffset(10f);
-        chart.setExtraBottomOffset(-1800f);
+        chart.setExtraBottomOffset((float)-(entries.size() * 200));
         chart.setExtraLeftOffset(20f);
         chart.setExtraLeftOffset(5f);
     }
@@ -151,7 +142,6 @@ public class BarChartBuilder {
         yl.setDrawGridLines(true);
         yl.setAxisMinimum(0f);
         yl.setTextSize(15f);
-        yl.setDrawLabels(false);
 
         // Right Y-Axis
         YAxis yr = chart.getAxisRight();
@@ -164,13 +154,5 @@ public class BarChartBuilder {
     private void setUpLegend(HorizontalBarChart chart) {
         Legend l = chart.getLegend();
         l.setEnabled(false);
-        /*l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
-        l.setDrawInside(false);
-        l.setFormSize(15f);
-        l.setTextSize(15f);
-        l.setXEntrySpace(20f);
-        l.setWordWrapEnabled(true);
-        l.setYOffset(-100f);*/
     }
 }
