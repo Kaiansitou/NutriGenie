@@ -77,6 +77,7 @@ public class BarChartBuilder {
                     y1 = y0;
                     y0 = 0f;
                 }
+                Log.i("BarChart", String.valueOf(y0) + " / " + String.valueOf(y1));
                 entries.remove(i);
                 entries.add(i,new BarEntry(x, new float[]{y0, y1}));
                 break;

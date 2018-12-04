@@ -11,13 +11,13 @@ public class NutrientConverter {
     public float convert(String nutrient, float amount) {
         switch (nutrient) {
             case "Sugar":
-                return 100f + amount;
+                return (float) (amount / (caloriesNeeded / 2000 * 37.5f)) * 100;
             case "Protein":
                 return (float) (amount / (caloriesNeeded / 2000 * 50)) * 100;
             case "Total Fat":
                 return (float) (amount / (caloriesNeeded / 2000 * 65)) * 100;
             case "Trans Fat":
-                return 100f + amount;
+                return (float) (amount / (caloriesNeeded / 2000 * 2)) * 100;
             case "Saturated Fat":
                 return (float) (amount / (caloriesNeeded / 2000 * 20)) * 100;
             case "Carbohydrates":

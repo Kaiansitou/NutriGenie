@@ -119,17 +119,36 @@ public class HomeFragment extends Fragment {
                     NutrientConverter converter = new NutrientConverter(caloriesNeeded);
 
                     barChartBuilder.changeEntry(nutritionNames, "Potassium", converter.convert("Potassium", (float) current.getPotassium()));
-                    barChartBuilder.changeEntry(nutritionNames, "Protein", converter.convert("Protein", (float) current.getPotassium()));
-                    barChartBuilder.changeEntry(nutritionNames, "Sugar", converter.convert("Sugar", (float) current.getPotassium()));
-                    barChartBuilder.changeEntry(nutritionNames, "Fiber", converter.convert("Fiber", (float) current.getPotassium()));
-                    barChartBuilder.changeEntry(nutritionNames, "Carbohydrates", converter.convert("Carbohydrates", (float) current.getPotassium()));
-                    barChartBuilder.changeEntry(nutritionNames, "Sodium", converter.convert("Sodium", (float) current.getPotassium()));
-                    barChartBuilder.changeEntry(nutritionNames, "Cholesterol", converter.convert("Cholesterol", (float) current.getPotassium()));
-                    barChartBuilder.changeEntry(nutritionNames, "Trans Fat", converter.convert("Trans Fat", (float) current.getPotassium()));
-                    barChartBuilder.changeEntry(nutritionNames, "Saturated Fat", converter.convert("Saturated Fat", (float) current.getPotassium()));
-                    barChartBuilder.changeEntry(nutritionNames, "Total Fat", converter.convert("Total Fat", (float) current.getPotassium()));
+                    barChartBuilder.changeEntry(nutritionNames, "Protein", converter.convert("Protein", (float) current.getProtein()));
+                    barChartBuilder.changeEntry(nutritionNames, "Sugar", converter.convert("Sugar", (float) current.getSugar()));
+                    barChartBuilder.changeEntry(nutritionNames, "Fiber", converter.convert("Fiber", (float) current.getFiber()));
+                    barChartBuilder.changeEntry(nutritionNames, "Carbohydrates", converter.convert("Carbohydrates", (float) current.getCarbohydrates()));
+                    barChartBuilder.changeEntry(nutritionNames, "Sodium", converter.convert("Sodium", (float) current.getSodium()));
+                    barChartBuilder.changeEntry(nutritionNames, "Cholesterol", converter.convert("Cholesterol", (float) current.getCholesterol()));
+                    barChartBuilder.changeEntry(nutritionNames, "Trans Fat", converter.convert("Trans Fat", (float) current.getTransFat()));
+                    barChartBuilder.changeEntry(nutritionNames, "Saturated Fat", converter.convert("Saturated Fat", (float) current.getSaturatedFat()));
+                    barChartBuilder.changeEntry(nutritionNames, "Total Fat", converter.convert("Total Fat", (float) current.getTotalFat()));
 
+                    ArrayList<BarEntry> entries = barChartBuilder.getEntries();
+                    LayoutParams params = stackedBarChart.getLayoutParams();
+                    params.height = 200 * entries.size();
+                    stackedBarChart.setLayoutParams(params);
+
+
+                    BarDataSet barDataSet = new BarDataSet(entries, "");
+
+                    barDataSet.setColors(green, red); // Set Stacked Bar Colors
+                    barDataSet.setValueTextSize(15f);
+                    barDataSet.setHighlightEnabled(false); // Turn off Bar Highlight when Selected
+                    barDataSet.setAxisDependency(YAxis.AxisDependency.RIGHT);
+
+                    BarData data = new BarData(barDataSet);
+                    data.setBarWidth(0.75f); // Width of Bars
+                    stackedBarChart.setData(data);
+
+                    stackedBarChart.getXAxis().setLabelCount(entries.size());
                     stackedBarChart.invalidate();
+
                     PieChart pieChart = makePieChart(
                             view.findViewById(R.id.home_piechart),
                             caloriesNeeded,
