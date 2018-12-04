@@ -129,16 +129,6 @@ public class HomeFragment extends Fragment {
                     barChartBuilder.changeEntry(nutritionNames, "Saturated Fat", converter.convert("Saturated Fat", (float) current.getPotassium()));
                     barChartBuilder.changeEntry(nutritionNames, "Total Fat", converter.convert("Total Fat", (float) current.getPotassium()));
 
-                    stackedBarChart.invalidate();
-
-                    PieChart pieChart = makePieChart(
-                            view.findViewById(R.id.home_piechart),
-                            caloriesNeeded,
-                            current.getCalories());
-
-                    pieChart.invalidate();
-
-                    view.findViewById(R.id.home_scroll_view).setVisibility(View.VISIBLE);
                 }
 
                 @Override
@@ -148,20 +138,15 @@ public class HomeFragment extends Fragment {
             });
         });
 
-        LayoutParams params = stackedBarChart.getLayoutParams();
-        params.height = 1800;
-        stackedBarChart.setLayoutParams(params);
-        Log.i(TAG, String.valueOf(params.height));
-
-
         ArrayList<BarEntry> entries = barChartBuilder.getEntries();
+        LayoutParams params = stackedBarChart.getLayoutParams();
+        params.height = 200 * entries.size();
+        stackedBarChart.setLayoutParams(params);
+
 
         BarDataSet barDataSet = new BarDataSet(entries, "");
-        /*barDataSet.setStackLabels(new String[]{
-                "% of Daily Value Consumed", "% of Daily Value Available", "Total % Consumed (Exceeded)"
-        });*/
 
-        barDataSet.setColors(green, yellow, light_gray, red, yellow); // Set Stacked Bar Colors
+        barDataSet.setColors(green, red); // Set Stacked Bar Colors
         barDataSet.setValueTextSize(15f);
         barDataSet.setHighlightEnabled(false); // Turn off Bar Highlight when Selected
         barDataSet.setAxisDependency(YAxis.AxisDependency.RIGHT);
@@ -170,7 +155,7 @@ public class HomeFragment extends Fragment {
         data.setBarWidth(0.75f); // Width of Bars
         stackedBarChart.setData(data);
 
-        stackedBarChart.getXAxis().setLabelCount(25);
+        stackedBarChart.getXAxis().setLabelCount(entries.size());//.setLabelCount(entries.size());
         stackedBarChart.invalidate();
 
 
@@ -227,13 +212,8 @@ public class HomeFragment extends Fragment {
 
         PieDataSet pieDataSet = new PieDataSet(pieData, "");
 
-        // Make Value Labels Outside Pie Chart
-        pieDataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
-        pieDataSet.setValueLinePart1Length(0.3f);
-        pieDataSet.setValueLinePart2Length(0.1f);
-        pieDataSet.setValueFormatter(new PercentFormatter());
-        pieDataSet.setValueTextSize(17.5f);
-        pieDataSet.setValueTextColor(Color.BLACK);
+        pieDataSet.setDrawValues(false);
+
 
         if (totalCaloriesConsumed > totalCaloriesAvailable) {
             pieDataSet.setColors(red);
