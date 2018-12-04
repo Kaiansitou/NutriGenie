@@ -3,6 +3,7 @@ package com.fruithat.nutrigenie;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -16,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.Button;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.ml.vision.FirebaseVision;
@@ -50,6 +52,9 @@ public class ScanFragment extends Fragment {
     // Needed so that startStatisticsActivity can reliably have access to this activity
     private FragmentActivity activity;
 
+    private Button testScanButton;
+    private Bitmap bitmap;
+
     private static final String TAG = "NutriGenie";
 
     @Override
@@ -77,7 +82,15 @@ public class ScanFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        dispatchTakePictureIntent();
+        // dispatchTakePictureIntent();
+        testScanButton = getActivity().findViewById(R.id.test_scan_button);
+        testScanButton.setOnClickListener(new Button.OnClickListener(){
+            public void onClick(View v) {
+                bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.nutrition_label_large);
+                image = FirebaseVisionImage.fromBitmap(bitmap);
+                processLabel();
+            }
+        });
     }
 
     @Override
@@ -88,7 +101,7 @@ public class ScanFragment extends Fragment {
 
     private void startStatisticsActivity() {
         if (activity != null) {
-            Intent intent = new Intent(activity, MainActivity.class);
+            Intent intent = new Intent(activity, StatisticsActivity.class);
             NutritionInformation nutriInfo = nutriInfoBuilder.build();
 
             // Debugging
