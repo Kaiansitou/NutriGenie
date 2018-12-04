@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -27,6 +28,10 @@ public class StatisticsActivity extends AppCompatActivity {
     int light_gray = Color.rgb(220,220,220); //Light Gray
     int red = Color.rgb(223,61,61); //Red
 
+    private Button keepButton;
+    private Button discardButton;
+    private NutritionHistory nh;
+
     private static final String TAG = "Statistics Activity";
 
     @Override
@@ -34,6 +39,26 @@ public class StatisticsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics);
         Log.i(TAG, "In statistics activity");
+
+        NutrientConverter nc = new NutrientConverter(2000f);
+        keepButton = findViewById(R.id.keep_button);
+        discardButton = findViewById(R.id.discard_button);
+        nh = NutritionHistory.getInstance();
+
+        keepButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //nh.addNutritionInformation();
+            }
+        });
+
+        discardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(StatisticsActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
 
         String date = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()).format(new Date());
 
@@ -112,56 +137,70 @@ public class StatisticsActivity extends AppCompatActivity {
         barChartBuilder.changePreferences(nutritionNames);
         float percent;
         try {
-            percent = toPercent("Sugar", (float)ni.getSugar());
+            percent = nc.convert("Sugar", (float)ni.getSugar());
             barChartBuilder.changeEntry(nutritionNames, "Sugar", percent);
         } catch (NullPointerException e) {
             Log.e(TAG, e.getMessage());
         }
 
         try {
-            percent = toPercent("Sodium", (float)ni.getSodium());
+            percent = nc.convert("Sodium", (float)ni.getSodium());
             barChartBuilder.changeEntry(nutritionNames, "Sodium", percent);
         } catch (NullPointerException e) {
             Log.e(TAG, e.getMessage());
         }
 
         try {
-            percent = toPercent("Protein", (float)ni.getProtein());
+            percent = nc.convert("Protein", (float)ni.getProtein());
             barChartBuilder.changeEntry(nutritionNames, "Protein", percent);
         } catch (NullPointerException e) {
             Log.e(TAG, e.getMessage());
         }
 
         try {
-            percent = toPercent("Total Fat", (float)ni.getTotalFat());
+            percent = nc.convert("Total Fat", (float)ni.getTotalFat());
             barChartBuilder.changeEntry(nutritionNames, "Total Fat", percent);
         } catch (NullPointerException e) {
             Log.e(TAG, e.getMessage());
         }
 
         try {
-            percent = toPercent("Carbohydrates", (float)ni.getCarbohydrates());
+            percent = nc.convert("Trans Fat", (float)ni.getTransFat());
+            barChartBuilder.changeEntry(nutritionNames, "Trans Fat", percent);
+        } catch (NullPointerException e) {
+            Log.e(TAG, e.getMessage());
+        }
+
+        try {
+            percent = nc.convert("Saturated Fat", (float)ni.getSaturatedFat());
+            barChartBuilder.changeEntry(nutritionNames, "Saturated Fat", percent);
+        } catch (NullPointerException e) {
+            Log.e(TAG, e.getMessage());
+        }
+
+        try {
+            percent = nc.convert("Carbohydrates", (float)ni.getCarbohydrates());
             barChartBuilder.changeEntry(nutritionNames, "Carbohydrates", percent);
         } catch (NullPointerException e) {
             Log.e(TAG, e.getMessage());
         }
 
         try {
-            percent = toPercent("Fiber", (float)ni.getFiber());
+            percent = nc.convert("Fiber", (float)ni.getFiber());
             barChartBuilder.changeEntry(nutritionNames, "Fiber", percent);
         } catch (NullPointerException e) {
             Log.e(TAG, e.getMessage());
         }
 
         try {
-            percent = toPercent("Cholesterol", (float)ni.getCholesterol());
+            percent = nc.convert("Cholesterol", (float)ni.getCholesterol());
             barChartBuilder.changeEntry(nutritionNames, "Cholesterol", percent);
         } catch (NullPointerException e) {
             Log.e(TAG, e.getMessage());
         }
 
         try {
-            percent = toPercent("Potassium", (float)ni.getPotassium());
+            percent = nc.convert("Potassium", (float)ni.getPotassium());
             barChartBuilder.changeEntry(nutritionNames, "Potassium", percent);
         } catch (NullPointerException e) {
             Log.e(TAG, e.getMessage());
@@ -198,27 +237,5 @@ public class StatisticsActivity extends AppCompatActivity {
         //barDataSet.notifyDataSetChanged();
         //stackedBarChart.notifyDataSetChanged();
         stackedBarChart.invalidate();
-    }
-
-    private float toPercent(String nutrient, float amount) {
-        switch (nutrient) {
-            case "Sugar":
-                return (amount / 90) * 100;
-            case "Protein":
-                return (amount / 50) * 100;
-            case "Total Fat":
-                return (amount / 70) * 100;
-            case "Carbohydrates":
-                return (amount / 310) * 100;
-            case "Sodium":
-                return (amount / 2.3f) * 100; // this might be g or mg
-            case "Fiber":
-                return (amount / 30) * 100;
-            case "Cholesterol":
-                return (amount / 300) * 100; // milligrams
-            case "Potassium":
-                return (amount / 3500) * 100; // milligrams
-            default: return -1;
-        }
     }
 }

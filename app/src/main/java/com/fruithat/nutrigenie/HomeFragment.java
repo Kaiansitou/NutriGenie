@@ -40,42 +40,7 @@ public class HomeFragment extends Fragment {
         // Inflate the layout defined in fragment_home.xml
         // The last parameter is false because the returned view does not need to be attached to the container ViewGroup
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-
-        String date = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()).format(new Date());
-
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:m:ss"); // here set the pattern as you date in string was containing like date/month/year
-
-        try {
-            Date startTime = sdf.parse(date + " 00:00:00");
-            Date endTime = sdf.parse(date + " 23:59:59");
-            NutritionHistory instance = NutritionHistory.getInstance();
-            NutritionInformation.NutritionInformationBuilder nb = new NutritionInformation.NutritionInformationBuilder()
-                    .calcium(1.0)
-                    .carbohydrates(8.0)
-                    .fiber(17.0)
-                    .vitaminA(1.0)
-                    .vitaminC(14.0)
-                    .iron(1.0)
-                    .calcium(1.0)
-                    .servingSize(1.0)
-                    .servingsPerContainer(1.0)
-                    .servingType("Cup");
-            NutritionInformation n = nb.build();
-
-            Log.i(TAG, "Data added");
-            //instance.addNutritionInformation("Apple",n);
-            instance.getNutritionInformation(startTime, endTime, new NutritionHistoryCallback() {
-                @Override
-                public void onDataReceived(HashMap<Long, NutritionInformation> nutritionInformation) {
-                    for (Long k : nutritionInformation.keySet()) {
-                        Log.i(TAG, "Value: " + String.valueOf(nutritionInformation.get(k).getCalcium()));
-                    }
-                }
-            });
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        view.findViewById(R.id.home_scroll_view).setVisibility(View.GONE);
 
         SharedFirebasePreferences preferences = SharedFirebasePreferences.getDefaultInstance(getActivity());
         ArrayList<String> names = new ArrayList<>();
@@ -151,16 +116,18 @@ public class HomeFragment extends Fragment {
                                 .build();
                     }
 
-                    barChartBuilder.changeEntry(nutritionNames, "Potassium", (float) (current.getPotassium() / (caloriesNeeded / 2000 * 3500)));
-                    barChartBuilder.changeEntry(nutritionNames, "Protein", (float) (current.getProtein() / (caloriesNeeded / 2000 * 50)));
-                    barChartBuilder.changeEntry(nutritionNames, "Sugar", 100f + (float) current.getSugar());
-                    barChartBuilder.changeEntry(nutritionNames, "Fiber", (float) (current.getFiber() / (caloriesNeeded / 2000 * 25)));
-                    barChartBuilder.changeEntry(nutritionNames, "Carbohydrates", (float) (current.getCarbohydrates() / (caloriesNeeded / 2000 * 300)));
-                    barChartBuilder.changeEntry(nutritionNames, "Sodium", (float) (current.getSodium() / (caloriesNeeded / 2000 * 2400)));
-                    barChartBuilder.changeEntry(nutritionNames, "Cholesterol", (float) (current.getCholesterol() / (caloriesNeeded / 2000 * 300)));
-                    barChartBuilder.changeEntry(nutritionNames, "Trans Fat", 100f + (float) current.getTransFat());
-                    barChartBuilder.changeEntry(nutritionNames, "Saturated Fat", (float) (current.getSaturatedFat() / (caloriesNeeded / 2000 * 20)));
-                    barChartBuilder.changeEntry(nutritionNames, "Total Fat", (float) (current.getTotalFat() / (caloriesNeeded / 2000 * 65)));
+                    NutrientConverter converter = new NutrientConverter(caloriesNeeded);
+
+                    barChartBuilder.changeEntry(nutritionNames, "Potassium", converter.convert("Potassium", (float) current.getPotassium()));
+                    barChartBuilder.changeEntry(nutritionNames, "Protein", converter.convert("Protein", (float) current.getPotassium()));
+                    barChartBuilder.changeEntry(nutritionNames, "Sugar", converter.convert("Sugar", (float) current.getPotassium()));
+                    barChartBuilder.changeEntry(nutritionNames, "Fiber", converter.convert("Fiber", (float) current.getPotassium()));
+                    barChartBuilder.changeEntry(nutritionNames, "Carbohydrates", converter.convert("Carbohydrates", (float) current.getPotassium()));
+                    barChartBuilder.changeEntry(nutritionNames, "Sodium", converter.convert("Sodium", (float) current.getPotassium()));
+                    barChartBuilder.changeEntry(nutritionNames, "Cholesterol", converter.convert("Cholesterol", (float) current.getPotassium()));
+                    barChartBuilder.changeEntry(nutritionNames, "Trans Fat", converter.convert("Trans Fat", (float) current.getPotassium()));
+                    barChartBuilder.changeEntry(nutritionNames, "Saturated Fat", converter.convert("Saturated Fat", (float) current.getPotassium()));
+                    barChartBuilder.changeEntry(nutritionNames, "Total Fat", converter.convert("Total Fat", (float) current.getPotassium()));
 
                     stackedBarChart.invalidate();
 
@@ -170,6 +137,8 @@ public class HomeFragment extends Fragment {
                             current.getCalories());
 
                     pieChart.invalidate();
+
+                    view.findViewById(R.id.home_scroll_view).setVisibility(View.VISIBLE);
                 }
 
                 @Override
@@ -201,14 +170,7 @@ public class HomeFragment extends Fragment {
         data.setBarWidth(0.75f); // Width of Bars
         stackedBarChart.setData(data);
 
-        stackedBarChart.getXAxis().setLabelCount(25);//.setLabelCount(entries.size());
-
-        // Enable Vertical Scrolling
-        //stackedBarChart.setVisibleXRangeMaximum(8f);
-        //stackedBarChart.moveViewTo(0,stackedBarChart.getAxisLeft().getAxisMaximum(), YAxis.AxisDependency.LEFT);
-
-        //barDataSet.notifyDataSetChanged();
-        //stackedBarChart.notifyDataSetChanged();
+        stackedBarChart.getXAxis().setLabelCount(25);
         stackedBarChart.invalidate();
 
 
