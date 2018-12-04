@@ -63,6 +63,7 @@ public class BarChartBuilder {
     public ArrayList<BarEntry> getEntries() {
         return entries;
     }
+
     public void changeEntry(String[] preferences, String nutritionName, float value) {
         for (int i = 0; i < preferences.length; i++) {
             if (preferences[i] == nutritionName) {
@@ -70,21 +71,51 @@ public class BarChartBuilder {
                 float x = dataEntry.getX();
                 float[] y = dataEntry.getYVals();
                 float y0 = y[0] + value;
-                float y1 = y[1] - value;
-                float y2 = y[2];
+                float y2 = y[2] - value;
+                float y3 = y[3];
+
                 if (y0 > 100) {
-                    y2 = y0;
+                    y3 = y0;
                     y0 = 0f;
-                    y1 = 0f;
-                } else if (y[0] == 0 && y[1] == 0) {
-                    y2 += value;
+                    y2 = 0f;
+                } else if (y[0] == 0 && y[2] == 0) {
+                    y3 += value;
                     y0 = 0;
-                    y1 = 0;
+                    y2 = 0;
                 }
                 entries.remove(i);
-                entries.add(i,new BarEntry(x, new float[]{y0, y1, y2}));
+                entries.add(i,new BarEntry(x, new float[]{y0, y[1], y2, y3, y[4]}));
 
                 //Log.i("entries", String.valueOf(y0) + "/" + String.valueOf(y1) + "/" + String.valueOf(y2));
+                break;
+            }
+        }
+    }
+
+    public void ScanEntry(String[] preferences, String nutritionName, float value) {
+        for (int i = 0; i < preferences.length; i++) {
+            if (preferences[i] == nutritionName) {
+                BarEntry dataEntry = entries.get(i);
+                float x = dataEntry.getX();
+                float[] y = dataEntry.getYVals();
+                float y0 = y[0];
+                float y1 = value;
+                float y2 = y[2] - value;
+                float y3 = y[3];
+                float y4 = y[4];
+
+                if (y[0] + value > 100) {
+                    y3 = y[0];
+                    y0 = 0f;
+                    y1 = 0f;
+                    y4 = value;
+                    y2 = 0f;
+                }
+
+                entries.remove(i);
+                entries.add(i,new BarEntry(x, new float[]{y0, y1, y2, y3, y4}));
+
+
                 break;
             }
         }
@@ -93,7 +124,7 @@ public class BarChartBuilder {
     private void addInitialEntries(String[] allNutritionNames) {
 
         for (int i = 0; i < allNutritionNames.length; i++) {
-            entries.add(new BarEntry((float)i,new float[]{0f,100f,0f}));
+            entries.add(new BarEntry((float)i,new float[]{0f,0f,100f,0f,0f}));
             labels.add(allNutritionNames[i]);
         }
         Log.i("data_bar", "names: "+String.valueOf(allNutritionNames.length));

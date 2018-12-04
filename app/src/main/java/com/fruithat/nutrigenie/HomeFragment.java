@@ -34,6 +34,7 @@ import java.util.Locale;
 public class HomeFragment extends Fragment {
     String TAG = "Home Fragment";
     int green = Color.rgb(5,205,110); //Green
+    int yellow = Color.rgb(254, 158,15);
     int light_gray = Color.rgb(220,220,220); //Light Gray
     int red = Color.rgb(223,61,61); //Red
     public HomeFragment() {
@@ -131,11 +132,11 @@ public class HomeFragment extends Fragment {
         ArrayList<BarEntry> entries = barChartBuilder.getEntries();
 
         BarDataSet barDataSet = new BarDataSet(entries, "");
-        barDataSet.setStackLabels(new String[]{
+        /*barDataSet.setStackLabels(new String[]{
                 "% of Daily Value Consumed", "% of Daily Value Available", "Total % Consumed (Exceeded)"
-        });
+        });*/
 
-        barDataSet.setColors(green, light_gray, red); // Set Stacked Bar Colors
+        barDataSet.setColors(green, yellow, light_gray, red, yellow); // Set Stacked Bar Colors
         barDataSet.setValueTextSize(15f);
         barDataSet.setHighlightEnabled(false); // Turn off Bar Highlight when Selected
         barDataSet.setAxisDependency(YAxis.AxisDependency.RIGHT);
