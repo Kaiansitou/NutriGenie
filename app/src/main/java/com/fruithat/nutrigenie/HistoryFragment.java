@@ -182,7 +182,10 @@ public class HistoryFragment extends Fragment {
                     NutritionInformation.NutritionInformationBuilder builder = new NutritionInformation.NutritionInformationBuilder();
                     NutritionInformation current = builder.build();
 
-                    for(Long day: nutritionInformation.keySet()) {
+                    Long[] days = nutritionInformation.keySet().stream().toArray(Long[]::new);
+                    Arrays.sort(days);
+
+                    for(Long day: days) {
                         xAxis.add(sdf2.format(new Date(day)).toString());
                         calories.add( (float) nutritionInformation.get(day).getCalories());
                         calcium.add((float) nutritionInformation.get(day).getCalcium());
